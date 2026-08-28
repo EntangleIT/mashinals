@@ -156,6 +156,14 @@ a {
   box-shadow: none;
 }
 
+.market-tile {
+  text-align: center;
+}
+
+.market-mine .panel {
+  margin: 0;
+}
+
 .btn-demo {
   background: var(--violet);
 }

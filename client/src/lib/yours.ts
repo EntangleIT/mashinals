@@ -8,10 +8,16 @@ import {
   createContext,
   deriveDepositAddresses,
   inscribe,
+  listOrdinals,
+  sellOrdinal,
+  buyOrdinal,
+  sendOrdinals,
+  cancelOrdinalListing,
   type OneSatContext,
 } from '@1sat/actions';
 import { OneSatServices } from '@1sat/client';
-import type { WalletInterface } from '@bsv/sdk';
+import { readAssetIdTag } from '@1sat/types';
+import type { WalletInterface, WalletOutput } from '@bsv/sdk';
 import type { InscriptionMeta } from '@mashinals/shared';
 
 export const YOURS_CHROME =
@@ -304,11 +310,168 @@ export function wrapWalletError(err: unknown, verb: string): Error {
 }
 
 export function whatsonchainUrl(txidOrOutpoint: string): string {
-  const txid = txidOrOutpoint.split('_')[0]!;
+  const txid = txidOrOutpoint.split(/[_.]/)[0]!;
   return `${WOC_TX}/${txid}`;
 }
 
 export function onesatOriginUrl(origin: string): string {
   // Explorer uses txid_vout with underscore
   return `${ONESAT_ORIGIN}/${origin.replace('.', '_')}`;
+}
+
+export function toDotOutpoint(outpoint: string): string {
+  return outpoint.replace('_', '.');
+}
+
+export function toUnderscoreOutpoint(outpoint: string): string {
+  return outpoint.replace('.', '_');
+}
+
+export function contentUrl(origin: string): string {
+  return `https://api.1sat.app/content/${toUnderscoreOutpoint(origin)}`;
+}
+
+export function formatSats(sats: number): string {
+  if (sats >= 1e8) return `${(sats / 1e8).toFixed(4)} BSV`;
+  if (sats >= 1e6) return `${(sats / 1e6).toFixed(2)} M sats`;
+  return `${sats.toLocaleString()} sats`;
+}
+
+export type WalletOrdItem = {
+  id: string;
+  outpoint: string;
+  origin: string | null;
+  name: string | null;
+  listed: boolean;
+  output: WalletOutput;
+};
+
+function originFromTags(tags: string[] | undefined): string | null {
+  if (!tags) return null;
+  for (const t of tags) {
+    if (t.startsWith('origin:') && t.length > 7) return toUnderscoreOutpoint(t.slice(7));
+    if (t === 'origin') continue;
+  }
+  // listing outs still carry origin as a bare tag sometimes — fall back to outpoint
+  return null;
+}
+
+function nameFromOutput(output: WalletOutput): string | null {
+  const tags = output.tags ?? [];
+  for (const t of tags) {
+    if (t.startsWith('name:')) return t.slice(5);
+  }
+  if (output.customInstructions) {
+    try {
+      const ci = JSON.parse(output.customInstructions) as { name?: string };
+      if (ci.name) return ci.name;
+    } catch {
+      // ignore
+    }
+  }
+  return null;
+}
+
+/** Ordinals currently in the connected Yours basket. */
+export async function listWalletOrdinals(limit = 100): Promise<WalletOrdItem[]> {
+  const ctx = requireContext();
+  const { outputs } = await listOrdinals.execute(ctx, {
+    limit,
+    includeTags: true,
+    includeCustomInstructions: true,
+  });
+  const items: WalletOrdItem[] = [];
+  for (const output of outputs) {
+    const id = readAssetIdTag(output.tags);
+    if (!id) continue;
+    const listed = (output.tags ?? []).includes('ordlock');
+    const origin = originFromTags(output.tags) ?? (listed ? null : toUnderscoreOutpoint(output.outpoint));
+    items.push({
+      id,
+      outpoint: toUnderscoreOutpoint(output.outpoint),
+      origin,
+      name: nameFromOutput(output),
+      listed,
+      output,
+    });
+  }
+  return items;
+}
+
+export async function sellOrdinalWithYours(input: {
+  id: string;
+  priceSats: number;
+  payAddress?: string;
+}): Promise<string> {
+  if (!Number.isFinite(input.priceSats) || input.priceSats < 1) {
+    throw new Error('Price must be at least 1 sat.');
+  }
+  const ctx = requireContext();
+  const result = await runWalletAction('List', 'List ordinal', () =>
+    sellOrdinal.execute(ctx, {
+      id: input.id,
+      price: Math.floor(input.priceSats),
+      ...(input.payAddress ? { payAddress: input.payAddress } : {}),
+      map: { app: 'mashinals', type: 'ord' },
+    }),
+  );
+  if (result.error || !result.txid) {
+    throw wrapWalletError(new Error(result.error ?? 'no-txid'), 'List');
+  }
+  return result.txid.toLowerCase();
+}
+
+export async function cancelListingWithYours(id: string): Promise<string> {
+  const ctx = requireContext();
+  const result = await runWalletAction('Cancel listing', 'Cancel', () =>
+    cancelOrdinalListing.execute(ctx, { id }),
+  );
+  if (result.error || !result.txid) {
+    throw wrapWalletError(new Error(result.error ?? 'no-txid'), 'Cancel listing');
+  }
+  return result.txid.toLowerCase();
+}
+
+export async function buyOrdinalWithYours(input: {
+  outpoint: string;
+  origin?: string;
+  name?: string;
+}): Promise<string> {
+  const ctx = requireContext();
+  const result = await runWalletAction('Buy', 'Buy ordinal', () =>
+    buyOrdinal.execute(ctx, {
+      outpoint: toDotOutpoint(input.outpoint),
+      ...(input.origin ? { origin: toDotOutpoint(input.origin) } : {}),
+      ...(input.name ? { name: input.name } : {}),
+      contentType: 'image/png',
+    }),
+  );
+  if (result.error || !result.txid) {
+    throw wrapWalletError(new Error(result.error ?? 'no-txid'), 'Buy');
+  }
+  return result.txid.toLowerCase();
+}
+
+export async function transferOrdinalWithYours(input: {
+  id: string;
+  address: string;
+}): Promise<string> {
+  if (!isLikelyBsvAddress(input.address)) {
+    throw new Error('Transfer needs a mainnet BSV address starting with 1.');
+  }
+  const ctx = requireContext();
+  const result = await runWalletAction('Transfer', 'Transfer ', () =>
+    sendOrdinals.execute(ctx, {
+      transfers: [{ id: input.id, address: input.address.trim() }],
+    }),
+  );
+  if (result.error || !result.txid) {
+    throw wrapWalletError(new Error(result.error ?? 'no-txid'), 'Transfer');
+  }
+  return result.txid.toLowerCase();
+}
+
+/** Expose market client used by the market page. */
+export function getOneSatServices(): OneSatServices {
+  return services;
 }

@@ -31,6 +31,9 @@ export function App() {
           <NavLink to="/gallery" className={({ isActive }) => (isActive ? 'active' : '')}>
             Gallery
           </NavLink>
+          <NavLink to="/market" className={({ isActive }) => (isActive ? 'active' : '')}>
+            Market
+          </NavLink>
           <NavLink to="/feed" className={({ isActive }) => (isActive ? 'active' : '')}>
             Feed
           </NavLink>
