@@ -6,7 +6,7 @@ import { useYoursWallet } from '../lib/wallet-store';
 import { demoInscribe, inscribeMashinal } from '../lib/inscription';
 import { reportInscription } from '../lib/api';
 import { PixelSprite } from '../pixel/PixelSprite';
-import { YOURS_CHROME, YOURS_SITE, whatsonchainUrl } from '../lib/yours';
+import { YOURS_SITE, whatsonchainUrl } from '../lib/yours';
 
 interface Props {
   record: MashinalRecord;
@@ -167,15 +167,13 @@ export function InscribePanel({ record }: Props) {
 
       {!connected && (
         <p className="muted" style={{ margin: 0, fontSize: '0.8rem' }}>
-          Unlock the Yours extension, then Connect. Need the extension?{' '}
-          <a href={YOURS_CHROME} target="_blank" rel="noreferrer">
-            Install Yours
-          </a>{' '}
-          (
+          Unlock the{' '}
           <a href={YOURS_SITE} target="_blank" rel="noreferrer">
-            yours.org
-          </a>
-          ).
+            Yours
+          </a>{' '}
+          Chrome extension on this tab, then click Connect. Detection happens when you connect
+          (BRC-100) — Mashinals will not send you to the Chrome Web Store if the wallet is already
+          installed.
         </p>
       )}
 

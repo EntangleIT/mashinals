@@ -1,4 +1,4 @@
-import { YOURS_CHROME, YOURS_SITE } from '../lib/yours';
+import { YOURS_SITE } from '../lib/yours';
 import { useYoursWallet } from '../lib/wallet-store';
 
 function shortAddr(addr: string): string {
@@ -6,7 +6,11 @@ function shortAddr(addr: string): string {
   return `${addr.slice(0, 5)}…${addr.slice(-4)}`;
 }
 
-/** Nav / header control for Yours Wallet (BRC-100) — mirrors SatPress WalletButton. */
+/**
+ * Nav control for Yours Wallet (BRC-100) — mirrors SatPress WalletButton.
+ * Always offers Connect (never a Chrome Web Store Install button). Yours is
+ * detected during connect autoDetect, not by scanning availableProviders.
+ */
 export function WalletButton() {
   const { status, session, connect, disconnect, error } = useYoursWallet();
 
@@ -36,31 +40,16 @@ export function WalletButton() {
     );
   }
 
-  // Default: Connect (Yours is usually installed). Install is a secondary link only.
   return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
-      <button
-        type="button"
-        className="btn btn-cyan"
-        style={{ padding: '0.35rem 0.65rem', fontSize: '0.75rem' }}
-        disabled={status === 'connecting'}
-        onClick={() => void onConnect()}
-        title={error ?? 'Connect Yours Wallet'}
-      >
-        {status === 'connecting' ? 'Connecting…' : 'Connect Yours'}
-      </button>
-      {status === 'missing' && (
-        <a
-          className="muted"
-          style={{ fontSize: '0.7rem' }}
-          href={YOURS_CHROME}
-          target="_blank"
-          rel="noreferrer"
-          title={`Install Yours Wallet — ${YOURS_SITE}`}
-        >
-          Install
-        </a>
-      )}
-    </span>
+    <button
+      type="button"
+      className="btn btn-cyan"
+      style={{ padding: '0.35rem 0.65rem', fontSize: '0.75rem' }}
+      disabled={status === 'connecting'}
+      onClick={() => void onConnect()}
+      title={error ?? `Connect Yours Wallet — ${YOURS_SITE}`}
+    >
+      {status === 'connecting' ? 'Connecting…' : 'Connect Yours'}
+    </button>
   );
 }

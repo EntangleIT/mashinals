@@ -7,12 +7,21 @@ import {
   type YoursSession,
 } from './yours';
 
+/**
+ * App-facing wallet status.
+ *
+ * Important: do NOT treat an empty `availableProviders` list as "missing".
+ * `@1sat/connect` only lists providers you configure via the `providers` prop;
+ * Yours (BRC-100 chrome extension) is found during `connectWallet({ autoDetect })`,
+ * not via that list. SatPress always passes `hasProviders: true` for the same reason.
+ */
 export type AppWalletStatus =
   | 'detecting'
-  | 'missing'
   | 'available'
   | 'connecting'
   | 'connected';
+
+type BridgeStatus = 'disconnected' | 'detecting' | 'selecting' | 'connecting' | 'connected';
 
 type WalletState = {
   status: AppWalletStatus;
@@ -20,11 +29,10 @@ type WalletState = {
   error: string | null;
   hydrated: boolean;
   syncWallet: (input: {
-    status: 'disconnected' | 'detecting' | 'selecting' | 'connecting' | 'connected';
+    status: BridgeStatus;
     wallet: WalletInterface | null;
     identityKey: string | null;
     providerType: string | null;
-    hasProviders: boolean;
   }) => Promise<void>;
   connect: () => Promise<YoursSession>;
   disconnect: () => Promise<void>;
@@ -41,7 +49,8 @@ export function registerWalletControls(
   disconnector = disconnectFn;
 }
 
-let syncing = false;
+/** Serialize syncs but never drop the latest payload (SatPress used a hard skip lock). */
+let syncChain: Promise<void> = Promise.resolve();
 
 export const useYoursWallet = create<WalletState>((set, get) => ({
   status: 'detecting',
@@ -49,25 +58,27 @@ export const useYoursWallet = create<WalletState>((set, get) => ({
   error: null,
   hydrated: false,
 
-  syncWallet: async ({ status, wallet, identityKey, providerType, hasProviders }) => {
-    if (syncing) return;
-    syncing = true;
-    try {
+  syncWallet: async (input) => {
+    const run = async () => {
+      const { status, wallet, identityKey, providerType } = input;
       if (status !== 'connected') {
         setActiveContext(null);
         set((prev) => ({
           status:
-            status === 'connecting' || status === 'selecting'
+            status === 'connecting'
               ? 'connecting'
               : status === 'detecting'
                 ? prev.hydrated
                   ? prev.status
                   : 'detecting'
-                : hasProviders
-                  ? 'available'
-                  : 'missing',
+                : // disconnected | selecting → always offer Connect (never Chrome Store)
+                  'available',
           session: null,
           hydrated: true,
+          error:
+            status === 'selecting'
+              ? 'Unlock Yours Wallet in Chrome, then click Connect again.'
+              : prev.error,
         }));
         return;
       }
@@ -84,9 +95,14 @@ export const useYoursWallet = create<WalletState>((set, get) => ({
           hydrated: true,
         });
       }
-    } finally {
-      syncing = false;
-    }
+    };
+
+    const next = syncChain.then(run, run);
+    syncChain = next.then(
+      () => undefined,
+      () => undefined,
+    );
+    await next;
   },
 
   connect: async () => {
@@ -100,15 +116,20 @@ export const useYoursWallet = create<WalletState>((set, get) => ({
       await connector();
       for (let i = 0; i < 80 && get().status !== 'connected'; i++) {
         await new Promise((r) => setTimeout(r, 100));
+        // Fail fast once the BRC-100 race finishes without a wallet
+        if (get().status === 'available' && get().error) break;
       }
       const session = get().session;
       if (get().status !== 'connected' || !session) {
-        throw new Error(get().error ?? 'Yours Wallet did not finish connecting.');
+        throw new Error(
+          get().error ??
+            'Could not reach Yours Wallet. Unlock the extension on this tab, then try Connect again.',
+        );
       }
       return session;
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Could not connect Yours Wallet.';
-      // Stay "available" so the user can retry Connect (don't bounce to Install).
+      // Stay available so the user can retry Connect — never bounce to Install.
       set({
         status: 'available',
         error: message,

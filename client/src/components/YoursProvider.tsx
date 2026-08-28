@@ -15,16 +15,14 @@ function YoursBridge({ children }: { children: ReactNode }) {
   }, [connect, disconnect]);
 
   useEffect(() => {
-    // SatPress always passes hasProviders: true. Yours is often installed but
-    // not listed in availableProviders until the user initiates connect
-    // (popup / BRC-100 protocol) — treating an empty list as "missing" wrongly
-    // sends people to the Chrome Web Store.
+    // SatPress always assumes a provider can be reached via BRC-100 autoDetect.
+    // Do NOT gate on availableProviders — that list is only configured iframe/Sigma
+    // providers, not the Yours Chrome extension.
     void syncWallet({
       status,
       wallet,
       identityKey,
       providerType,
-      hasProviders: true,
     });
   }, [status, wallet, identityKey, providerType, syncWallet]);
 
@@ -37,7 +35,6 @@ function YoursBridge({ children }: { children: ReactNode }) {
           wallet: null,
           identityKey: null,
           providerType: null,
-          hasProviders: true,
         });
       }
     }
@@ -51,13 +48,14 @@ function YoursBridge({ children }: { children: ReactNode }) {
 /**
  * Mounts BRC-100 WalletProvider client-side only (touches browser APIs).
  * Same pattern as auxon/satpress `YoursProvider`.
+ * GatchaGo has no Yours / @1sat wallet integration — SatPress is the reference.
  */
 export function YoursProvider({ children }: { children: ReactNode }) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   if (!mounted) return <>{children}</>;
   return (
-    <WalletProvider autoReconnect>
+    <WalletProvider autoReconnect autoDetect>
       <YoursBridge>{children}</YoursBridge>
     </WalletProvider>
   );
