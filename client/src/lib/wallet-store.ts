@@ -3,7 +3,6 @@ import type { WalletInterface } from '@bsv/sdk';
 import {
   buildContext,
   buildSession,
-  getActiveContext,
   setActiveContext,
   type YoursSession,
 } from './yours';
