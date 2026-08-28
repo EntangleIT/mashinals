@@ -15,8 +15,7 @@
     {
       "binding": "DB",
       "database_name": "mashinals-db",
-      // Replace after: npx wrangler d1 create mashinals-db
-      "database_id": "00000000-0000-4000-8000-000000000001",
+      "database_id": "c1aefe08-d9f3-41da-86ba-4cc7dcfe9c55",
       "migrations_dir": "migrations"
     }
   ],

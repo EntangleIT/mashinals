@@ -79,10 +79,9 @@ One Worker named **`mashinals`** serves the frontend (Workers Static Assets) and
 # 1) Auth (once)
 npx wrangler login
 
-# 2) Create Mashinals-only D1 (once)
-npm run db:create
-# → copy the printed database_id into worker/wrangler.jsonc → d1_databases[0].database_id
-#    (replace the placeholder UUID)
+# 2) Create Mashinals-only D1 (once) — already created: mashinals-db
+#    database_id is set in worker/wrangler.jsonc
+# npm run db:create
 
 # 3) Apply migrations to remote D1
 npm run db:migrate
