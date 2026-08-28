@@ -8,6 +8,8 @@ export interface InscribeResult {
   origin: string;
   svgHash: string;
   message: string;
+  /** On-chain lock address (ordinal deposit) when live. */
+  destination?: string;
 }
 
 function buildMeta(record: MashinalRecord): InscriptionMeta {
@@ -68,7 +70,7 @@ export async function inscribeMashinal(record: MashinalRecord): Promise<Inscribe
   const meta = buildMeta(record);
 
   try {
-    const { txid, origin } = await inscribeWithYours({
+    const { txid, origin, destination } = await inscribeWithYours({
       base64Content: dataB64,
       contentType: 'image/png',
       map: metaToMap(meta),
@@ -77,7 +79,7 @@ export async function inscribeMashinal(record: MashinalRecord): Promise<Inscribe
     try {
       localStorage.setItem(
         `mashinals:inscribed:${record.id}`,
-        JSON.stringify({ txid, origin, svgHash, meta, at: Date.now() }),
+        JSON.stringify({ txid, origin, destination, svgHash, meta, at: Date.now() }),
       );
     } catch {
       // ignore
@@ -87,11 +89,11 @@ export async function inscribeMashinal(record: MashinalRecord): Promise<Inscribe
       demo: false,
       txid,
       origin,
+      destination,
       svgHash,
       message:
-        `Broadcast via Yours Wallet — origin ${origin}. ` +
-        'The ordinal can take a bit to appear in Yours (mempool + indexer). ' +
-        'Check Whatsonchain for the tx; do not inscribe again.',
+        `Broadcast to your ordinal deposit ${destination.slice(0, 8)}… — origin ${origin}. ` +
+        'Pull to refresh Ordinals in Yours after the indexer catches up. Do not mint again.',
     };
   } catch (err) {
     throw wrapWalletError(err, 'Inscribe');

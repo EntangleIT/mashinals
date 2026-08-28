@@ -128,9 +128,10 @@ export function InscribePanel({ record }: Props) {
             </a>
           </p>
           <p className="muted" style={{ margin: '0.35rem 0 0', fontSize: '0.8rem' }}>
-            Yours often lists new ordinals only after its indexer catches up — especially while the
-            tx is still in the mempool. Open the extension’s activity / Ordinals tab later; do not
-            mint again.
+            New mints lock to your Yours ordinal deposit address so the wallet can list them. Earlier
+            mints may have used a one-off key and stay invisible in the Ordinals tab even though they
+            are on-chain — use the explorer links above. Pull-to-refresh Ordinals after confirmation;
+            do not mint again.
           </p>
         </div>
       )}

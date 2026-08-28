@@ -72,7 +72,9 @@ export function DetailPage() {
                     1Sat explorer
                   </a>
                   <br />
-                  May take a while to show in Yours while indexers catch up.
+                  May take a while to show in Yours after confirmation. Older mints locked to
+                  one-off keys may never appear in the Ordinals tab — the explorer link is
+                  authoritative.
                 </span>
               ) : (
                 <span className="muted" style={{ fontSize: '0.85rem' }}>

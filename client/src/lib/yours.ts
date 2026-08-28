@@ -181,25 +181,48 @@ async function runWalletAction<T extends { txid?: string; error?: string }>(
 }
 
 /**
+ * Resolve the stable ordinal deposit address (P1SAT `1sat 1`).
+ * Default inscribe locks to a one-off `inscribe-<random>` key that Yours often
+ * never lists in its Ordinals UI — deposit addresses are what the wallet syncs.
+ */
+export async function resolveOrdDepositAddress(): Promise<string> {
+  const ctx = requireContext();
+  const { derivations } = await deriveDepositAddresses.execute(ctx, {
+    startIndex: 0,
+    count: 2,
+  });
+  const ord = derivations[1]?.address ?? derivations[0]?.address;
+  if (!ord) {
+    throw new Error('Yours Wallet did not return an ordinal deposit address.');
+  }
+  return ord;
+}
+
+/**
  * Inscribe a PNG (or other) payload via Yours / BRC-100 wallet.
- * Matches SatPress: local createAction pipeline (no usePermissionModule).
+ * Locks to the ordinal deposit address so Yours / indexer sync can show it.
+ * Uses the local createAction pipeline (no usePermissionModule — that path
+ * often returns no-txid-returned from Yours).
  * Returns origin outpoint (txid_0).
  */
 export async function inscribeWithYours(input: {
   base64Content: string;
   contentType: string;
   map: Record<string, string>;
-}): Promise<{ txid: string; origin: string }> {
+  /** Defaults to the connected wallet's ordinal deposit address. */
+  destinationAddress?: string;
+}): Promise<{ txid: string; origin: string; destination: string }> {
   const ctx = requireContext();
+  const destination =
+    input.destinationAddress?.trim() || (await resolveOrdDepositAddress());
   try {
     const result = await runWalletAction('Inscribe', INSCRIBE_DESCRIPTION, () =>
-      // Do NOT pass usePermissionModule — that path often returns no-txid-returned
-      // from Yours because createAction finishes without handing back the txid.
-      // SatPress uses the default local pipeline (createAction → signAction).
       inscribe.execute(ctx, {
         base64Content: input.base64Content,
         contentType: input.contentType,
         map: input.map,
+        // Explicit deposit address — not the default ephemeral inscribe-* key.
+        destination: { address: destination },
       }),
     );
 
@@ -208,7 +231,7 @@ export async function inscribeWithYours(input: {
     }
 
     const txid = result.txid.toLowerCase();
-    return { txid, origin: `${txid}_0` };
+    return { txid, origin: `${txid}_0`, destination };
   } catch (err) {
     if (err instanceof WalletTimeoutError) throw err;
     throw wrapWalletError(err, 'Inscribe');
