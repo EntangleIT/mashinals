@@ -135,17 +135,7 @@ export function InscribePanel({ record }: Props) {
       )}
 
       <div className="cta-row">
-        {status === 'missing' ? (
-          <a
-            className="btn btn-cyan"
-            href={YOURS_CHROME}
-            target="_blank"
-            rel="noreferrer"
-            style={{ textDecoration: 'none' }}
-          >
-            Install Yours Wallet
-          </a>
-        ) : !connected ? (
+        {!connected ? (
           <button
             type="button"
             className="btn btn-cyan"
@@ -163,7 +153,7 @@ export function InscribePanel({ record }: Props) {
           type="button"
           className="btn"
           onClick={onInscribe}
-          disabled={busy || alreadyOnChain || status === 'missing' || status === 'detecting'}
+          disabled={busy || alreadyOnChain || status === 'detecting'}
         >
           Inscribe 1Sat
         </button>
@@ -174,6 +164,20 @@ export function InscribePanel({ record }: Props) {
           Open detail
         </Link>
       </div>
+
+      {!connected && (
+        <p className="muted" style={{ margin: 0, fontSize: '0.8rem' }}>
+          Unlock the Yours extension, then Connect. Need the extension?{' '}
+          <a href={YOURS_CHROME} target="_blank" rel="noreferrer">
+            Install Yours
+          </a>{' '}
+          (
+          <a href={YOURS_SITE} target="_blank" rel="noreferrer">
+            yours.org
+          </a>
+          ).
+        </p>
+      )}
 
       {connected && session && (
         <p className="muted" style={{ margin: 0, fontSize: '0.8rem' }}>

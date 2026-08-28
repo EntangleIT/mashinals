@@ -3,26 +3,30 @@ import { WalletProvider, useWallet } from '@1sat/react';
 import { registerWalletControls, useYoursWallet } from '../lib/wallet-store';
 
 function YoursBridge({ children }: { children: ReactNode }) {
-  const { wallet, status, identityKey, providerType, availableProviders, connect, disconnect } =
-    useWallet();
+  const { wallet, status, identityKey, providerType, connect, disconnect } = useWallet();
   const syncWallet = useYoursWallet((s) => s.syncWallet);
 
   useEffect(() => {
+    // Match SatPress: drive connect/disconnect from the React provider.
     registerWalletControls(
-      (provider) => connect(provider),
+      () => connect(),
       () => disconnect(),
     );
   }, [connect, disconnect]);
 
   useEffect(() => {
+    // SatPress always passes hasProviders: true. Yours is often installed but
+    // not listed in availableProviders until the user initiates connect
+    // (popup / BRC-100 protocol) — treating an empty list as "missing" wrongly
+    // sends people to the Chrome Web Store.
     void syncWallet({
       status,
       wallet,
       identityKey,
       providerType,
-      hasProviders: availableProviders.length > 0 || status === 'connected',
+      hasProviders: true,
     });
-  }, [status, wallet, identityKey, providerType, availableProviders.length, syncWallet]);
+  }, [status, wallet, identityKey, providerType, syncWallet]);
 
   useEffect(() => {
     function onEvent(e: Event) {
@@ -46,14 +50,14 @@ function YoursBridge({ children }: { children: ReactNode }) {
 
 /**
  * Mounts BRC-100 WalletProvider client-side only (touches browser APIs).
- * Children can still render before mount; wallet state lives in the zustand store.
+ * Same pattern as auxon/satpress `YoursProvider`.
  */
 export function YoursProvider({ children }: { children: ReactNode }) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   if (!mounted) return <>{children}</>;
   return (
-    <WalletProvider autoReconnect autoDetect>
+    <WalletProvider autoReconnect>
       <YoursBridge>{children}</YoursBridge>
     </WalletProvider>
   );

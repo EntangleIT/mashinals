@@ -31,11 +31,11 @@ type WalletState = {
   disconnect: () => Promise<void>;
 };
 
-let connector: ((providerType?: string) => Promise<void>) | null = null;
+let connector: (() => Promise<void>) | null = null;
 let disconnector: (() => void) | null = null;
 
 export function registerWalletControls(
-  connectFn: (providerType?: string) => Promise<void>,
+  connectFn: () => Promise<void>,
   disconnectFn: () => void,
 ): void {
   connector = connectFn;
@@ -93,7 +93,7 @@ export const useYoursWallet = create<WalletState>((set, get) => ({
   connect: async () => {
     if (!connector) {
       throw new Error(
-        'Yours Wallet is not ready yet. Install Yours from yours.org, unlock it, then reload this page.',
+        'Yours Wallet bridge is not ready yet. Wait a moment and try again, or reload the page.',
       );
     }
     set({ status: 'connecting', error: null });
@@ -109,8 +109,9 @@ export const useYoursWallet = create<WalletState>((set, get) => ({
       return session;
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Could not connect Yours Wallet.';
+      // Stay "available" so the user can retry Connect (don't bounce to Install).
       set({
-        status: getActiveContext() ? 'available' : 'missing',
+        status: 'available',
         error: message,
         hydrated: true,
       });

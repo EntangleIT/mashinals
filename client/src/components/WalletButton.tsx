@@ -6,7 +6,7 @@ function shortAddr(addr: string): string {
   return `${addr.slice(0, 5)}…${addr.slice(-4)}`;
 }
 
-/** Nav / header control for Yours Wallet (BRC-100). */
+/** Nav / header control for Yours Wallet (BRC-100) — mirrors SatPress WalletButton. */
 export function WalletButton() {
   const { status, session, connect, disconnect, error } = useYoursWallet();
 
@@ -14,7 +14,7 @@ export function WalletButton() {
     try {
       await connect();
     } catch {
-      // error surfaced via store / UI text below
+      // error stays on the store for tooltip / inscribe panel
     }
   }
 
@@ -36,8 +36,9 @@ export function WalletButton() {
     );
   }
 
-  if (status === 'available' || status === 'connecting') {
-    return (
+  // Default: Connect (Yours is usually installed). Install is a secondary link only.
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
       <button
         type="button"
         className="btn btn-cyan"
@@ -48,19 +49,18 @@ export function WalletButton() {
       >
         {status === 'connecting' ? 'Connecting…' : 'Connect Yours'}
       </button>
-    );
-  }
-
-  return (
-    <a
-      className="btn btn-ghost"
-      style={{ padding: '0.35rem 0.55rem', fontSize: '0.75rem', textDecoration: 'none' }}
-      href={YOURS_CHROME}
-      target="_blank"
-      rel="noreferrer"
-      title={`Install Yours Wallet — ${YOURS_SITE}`}
-    >
-      Install Yours
-    </a>
+      {status === 'missing' && (
+        <a
+          className="muted"
+          style={{ fontSize: '0.7rem' }}
+          href={YOURS_CHROME}
+          target="_blank"
+          rel="noreferrer"
+          title={`Install Yours Wallet — ${YOURS_SITE}`}
+        >
+          Install
+        </a>
+      )}
+    </span>
   );
 }
