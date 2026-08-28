@@ -6,7 +6,7 @@ import { useYoursWallet } from '../lib/wallet-store';
 import { demoInscribe, inscribeMashinal } from '../lib/inscription';
 import { reportInscription } from '../lib/api';
 import { PixelSprite } from '../pixel/PixelSprite';
-import { YOURS_SITE, whatsonchainUrl } from '../lib/yours';
+import { YOURS_SITE, onesatOriginUrl, whatsonchainUrl } from '../lib/yours';
 
 interface Props {
   record: MashinalRecord;
@@ -116,12 +116,21 @@ export function InscribePanel({ record }: Props) {
 
       {alreadyOnChain && (
         <div>
-          <span className="badge">ON-CHAIN</span>
+          <span className="badge">BROADCAST</span>
           <p className="muted" style={{ margin: '0.4rem 0 0', fontSize: '0.85rem' }}>
             origin{' '}
             <a href={whatsonchainUrl(record.origin!)} target="_blank" rel="noreferrer">
               {record.origin}
             </a>
+            {' · '}
+            <a href={onesatOriginUrl(record.origin!)} target="_blank" rel="noreferrer">
+              1Sat explorer
+            </a>
+          </p>
+          <p className="muted" style={{ margin: '0.35rem 0 0', fontSize: '0.8rem' }}>
+            Yours often lists new ordinals only after its indexer catches up — especially while the
+            tx is still in the mempool. Open the extension’s activity / Ordinals tab later; do not
+            mint again.
           </p>
         </div>
       )}

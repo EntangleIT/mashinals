@@ -4,6 +4,7 @@ import { InscribePanel } from '../components/InscribePanel';
 import { PixelSprite } from '../pixel/PixelSprite';
 import { capturePreviewPng } from '../pixel/render';
 import { genesSummary } from '../lib/inscription';
+import { onesatOriginUrl, whatsonchainUrl } from '../lib/yours';
 import { useMemo } from 'react';
 
 export function DetailPage() {
@@ -58,12 +59,26 @@ export function DetailPage() {
           {(record.origin || record.demoOrigin) && (
             <p>
               <span className={`badge${record.demoOrigin && !record.origin ? ' demo' : ''}`}>
-                {record.origin ? 'ON-CHAIN' : 'DEMO ONLY — NOT ON-CHAIN'}
+                {record.origin ? 'BROADCAST' : 'DEMO ONLY — NOT ON-CHAIN'}
               </span>
               <br />
-              <span className="muted" style={{ fontSize: '0.85rem' }}>
-                {record.origin ?? record.demoOrigin}
-              </span>
+              {record.origin ? (
+                <span className="muted" style={{ fontSize: '0.85rem' }}>
+                  <a href={whatsonchainUrl(record.origin)} target="_blank" rel="noreferrer">
+                    {record.origin}
+                  </a>
+                  {' · '}
+                  <a href={onesatOriginUrl(record.origin)} target="_blank" rel="noreferrer">
+                    1Sat explorer
+                  </a>
+                  <br />
+                  May take a while to show in Yours while indexers catch up.
+                </span>
+              ) : (
+                <span className="muted" style={{ fontSize: '0.85rem' }}>
+                  {record.demoOrigin}
+                </span>
+              )}
             </p>
           )}
 

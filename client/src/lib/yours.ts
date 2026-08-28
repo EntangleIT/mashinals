@@ -18,6 +18,8 @@ export const YOURS_CHROME =
   'https://chromewebstore.google.com/detail/yours-wallet/mlbnicldlpdimbjdcncnklfempedeipj';
 export const YOURS_SITE = 'https://yours.org';
 export const WOC_TX = 'https://whatsonchain.com/tx';
+/** 1Sat ordinal explorer (indexes after broadcast; may lag while in mempool). */
+export const ONESAT_ORIGIN = 'https://ordinals.gorillapool.io/txo/origin';
 
 export type YoursAddresses = {
   bsvAddress: string;
@@ -254,4 +256,9 @@ export function wrapWalletError(err: unknown, verb: string): Error {
 export function whatsonchainUrl(txidOrOutpoint: string): string {
   const txid = txidOrOutpoint.split('_')[0]!;
   return `${WOC_TX}/${txid}`;
+}
+
+export function onesatOriginUrl(origin: string): string {
+  // Explorer uses txid_vout with underscore
+  return `${ONESAT_ORIGIN}/${origin.replace('.', '_')}`;
 }

@@ -88,7 +88,10 @@ export async function inscribeMashinal(record: MashinalRecord): Promise<Inscribe
       txid,
       origin,
       svgHash,
-      message: `Inscribed on-chain via Yours Wallet. Origin ${origin}`,
+      message:
+        `Broadcast via Yours Wallet — origin ${origin}. ` +
+        'The ordinal can take a bit to appear in Yours (mempool + indexer). ' +
+        'Check Whatsonchain for the tx; do not inscribe again.',
     };
   } catch (err) {
     throw wrapWalletError(err, 'Inscribe');
