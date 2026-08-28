@@ -15,7 +15,7 @@ export default {
 
     try {
       if (path === '/health' && request.method === 'GET') {
-        return json(env, request, { ok: true, service: 'mashinals-api' });
+        return json(env, request, { ok: true, service: 'mashinals' });
       }
 
       if (path === '/feed' && request.method === 'GET') {

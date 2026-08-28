@@ -11,3 +11,5 @@ shared/dist/
 coverage/
 agent-tools/
 *.tsbuildinfo
+.mf/
+.cloudflare/

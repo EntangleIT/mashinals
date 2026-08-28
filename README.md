@@ -43,32 +43,60 @@ npm workspaces:
 |---------|------|
 | `shared` | Types, palettes, deterministic mash genetics, starters, tests |
 | `client` | Vite + React 18 + Zustand + Framer Motion play UI |
-| `worker` | Cloudflare Worker + D1 (recipes, inscription index) |
+| `worker` | **New** Cloudflare Worker `mashinals` — API + Workers Static Assets (same origin) + Mashinals-only D1 |
+
+This app does **not** reuse `gachago-api`, does **not** publish into an entangleit.com Pages/portfolio directory, and does **not** share GatchaGo’s Wrangler project.
 
 ## Local dev
 
 ```bash
 npm install
-npm run dev:client          # http://127.0.0.1:45321
-# optional API:
-npm run db:migrate:local -w worker
-npm run dev:worker          # http://127.0.0.1:8788
+npm run dev:client          # http://127.0.0.1:45321  (Vite; proxies /api → worker)
+npm run db:migrate:local
+npm run dev:worker          # http://127.0.0.1:8788  (Worker + built assets + D1)
 # or both:
 npm run dev
 ```
 
-Client proxies `/api/*` to the worker in Vite.
+Client calls `/api/*` (same-origin in production; Vite proxy in local client-only mode).
 
 ### Env
 
-Copy `.env.example` → `client/.env.local` if you need overrides:
+Copy `.env.example` → `client/.env.local` only if you need overrides:
 
 | Var | Purpose |
 |-----|---------|
-| `VITE_API_URL` | Worker base URL (default `/api` via Vite proxy) |
+| `VITE_API_URL` | API base (default `/api` — correct for same-origin Worker deploy) |
 | `VITE_ENABLE_AI_FLOURISH` | Optional Workers AI name/caption flag — **off by default**; app is fully playable without it |
 
-No secrets are required to play. Never commit `.env` / `.dev.vars` with keys.
+No secrets are required to play. Never commit `.env`, `.dev.vars`, or account-specific Cloudflare IDs.
+
+## Deploy (new Cloudflare Worker)
+
+One Worker named **`mashinals`** serves the frontend (Workers Static Assets) and the `/api/*` routes. D1 database name: **`mashinals-db`**.
+
+```bash
+# 1) Auth (once)
+npx wrangler login
+
+# 2) Create Mashinals-only D1 (once)
+npm run db:create
+# → copy the printed database_id into worker/wrangler.jsonc → d1_databases[0].database_id
+#    (replace the placeholder UUID)
+
+# 3) Apply migrations to remote D1
+npm run db:migrate
+
+# 4) Build client + shared, then deploy THIS worker only
+npm run deploy
+# equivalent: npm run build && npm run deploy -w worker
+```
+
+After deploy, open the `*.workers.dev` URL Wrangler prints (or attach a custom route later). Frontend and API share that origin — no separate Pages project, no copying files into another site.
+
+Optional: set `CORS_ORIGIN` in `worker/wrangler.jsonc` `vars` if you ever front the API from a different origin (not needed for the default same-origin setup).
+
+There are **no required Worker secrets** for the core toy (wallet keys never leave the browser). If you later enable optional AI flourish, document those secrets separately and keep them out of git.
 
 ## Tests
 

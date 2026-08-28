@@ -7,6 +7,7 @@
     "dev": "wrangler dev --port 8788 --local",
     "build": "tsc --noEmit",
     "deploy": "wrangler deploy",
+    "db:create": "wrangler d1 create mashinals-db",
     "db:migrate:local": "wrangler d1 migrations apply mashinals-db --local",
     "db:migrate": "wrangler d1 migrations apply mashinals-db --remote"
   },
