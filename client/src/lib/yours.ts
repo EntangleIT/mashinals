@@ -1,5 +1,6 @@
 /**
  * Yours Wallet client over the BRC-100 provider API (@1sat/actions).
+ * Pattern matches auxon/satpress `src/lib/ord/yours.ts`.
  * Docs: https://yours-wallet.gitbook.io/provider-api
  */
 
@@ -54,7 +55,10 @@ export function requireContext(): OneSatContext {
   return activeCtx;
 }
 
-/** Build OneSat context for the connected extension wallet. */
+/**
+ * Extension wallets are dApp-style (isBaseWallet false). Same as SatPress —
+ * approval UI comes from the wallet's createAction/signAction handling.
+ */
 export function buildContext(wallet: WalletInterface): OneSatContext {
   return createContext(wallet, { chain: 'main', services, isBaseWallet: false });
 }
@@ -99,8 +103,84 @@ export function metaToMap(meta: InscriptionMeta): Record<string, string> {
   return map;
 }
 
+// ── Hang / missing-txid recovery (from SatPress) ─────────────────────────────
+// Yours can approve + broadcast but return without a txid (permission-module
+// path) or hang on ordinals.1sat.app proof fetches. Recover from listActions.
+
+const WALLET_CALL_TIMEOUT_MS = 180_000;
+const INSCRIBE_DESCRIPTION = 'Create inscription';
+
+class WalletTimeoutError extends Error {
+  constructor(readonly stage: string) {
+    super(`wallet-timeout:${stage}`);
+    this.name = 'WalletTimeoutError';
+  }
+}
+
+function withTimeout<T>(p: Promise<T>, stage: string): Promise<T> {
+  let timer: ReturnType<typeof setTimeout>;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new WalletTimeoutError(stage)), WALLET_CALL_TIMEOUT_MS);
+  });
+  return Promise.race([p, timeout]).finally(() => clearTimeout(timer));
+}
+
+async function recoverTxidFromActions(descriptionPrefix: string): Promise<string | null> {
+  try {
+    const wallet = activeCtx?.wallet;
+    if (!wallet?.listActions) return null;
+    const { actions } = await wallet.listActions({ labels: [], limit: 10 });
+    const match = (actions ?? []).find(
+      (a) =>
+        a.isOutgoing &&
+        typeof a.description === 'string' &&
+        a.description.startsWith(descriptionPrefix) &&
+        (a.status === 'completed' || a.status === 'unproven'),
+    );
+    return match?.txid ? match.txid.toLowerCase() : null;
+  } catch {
+    return null;
+  }
+}
+
+async function runWalletAction<T extends { txid?: string; error?: string }>(
+  stage: string,
+  descriptionPrefix: string,
+  run: () => Promise<T>,
+): Promise<T> {
+  console.info(`[yours] ${stage}…`);
+  try {
+    const result = await withTimeout(run(), stage);
+    if (result.txid) {
+      console.info(`[yours] ${stage} done`, result.txid);
+      return result;
+    }
+    // createAction finished without txid — often still broadcast. Recover.
+    console.warn(`[yours] ${stage} returned without txid (${result.error ?? 'empty'}) — recovering`);
+    const recovered = await recoverTxidFromActions(descriptionPrefix);
+    if (recovered) {
+      console.warn(`[yours] recovered txid: ${recovered}`);
+      return { ...result, txid: recovered, error: undefined };
+    }
+    return result;
+  } catch (err) {
+    if (!(err instanceof WalletTimeoutError)) throw err;
+    console.warn(`[yours] ${stage} timed out — attempting txid recovery`);
+    const recovered = await recoverTxidFromActions(descriptionPrefix);
+    if (recovered) {
+      console.warn(`[yours] recovered txid after timeout: ${recovered}`);
+      return { txid: recovered } as T;
+    }
+    throw new Error(
+      `${stage}: Yours Wallet did not respond within ${Math.round(WALLET_CALL_TIMEOUT_MS / 1000)}s. ` +
+        'The transaction may still have broadcast — check the wallet activity before retrying.',
+    );
+  }
+}
+
 /**
  * Inscribe a PNG (or other) payload via Yours / BRC-100 wallet.
+ * Matches SatPress: local createAction pipeline (no usePermissionModule).
  * Returns origin outpoint (txid_0).
  */
 export async function inscribeWithYours(input: {
@@ -109,20 +189,28 @@ export async function inscribeWithYours(input: {
   map: Record<string, string>;
 }): Promise<{ txid: string; origin: string }> {
   const ctx = requireContext();
-  const result = await inscribe.execute(ctx, {
-    base64Content: input.base64Content,
-    contentType: input.contentType,
-    map: input.map,
-    // Route through the wallet permission module so Yours shows its approval popup
-    usePermissionModule: true,
-  });
+  try {
+    const result = await runWalletAction('Inscribe', INSCRIBE_DESCRIPTION, () =>
+      // Do NOT pass usePermissionModule — that path often returns no-txid-returned
+      // from Yours because createAction finishes without handing back the txid.
+      // SatPress uses the default local pipeline (createAction → signAction).
+      inscribe.execute(ctx, {
+        base64Content: input.base64Content,
+        contentType: input.contentType,
+        map: input.map,
+      }),
+    );
 
-  if (result.error || !result.txid) {
-    throw wrapWalletError(new Error(result.error ?? 'no-txid'), 'Inscribe');
+    if (result.error || !result.txid) {
+      throw wrapWalletError(new Error(result.error ?? 'no-txid'), 'Inscribe');
+    }
+
+    const txid = result.txid.toLowerCase();
+    return { txid, origin: `${txid}_0` };
+  } catch (err) {
+    if (err instanceof WalletTimeoutError) throw err;
+    throw wrapWalletError(err, 'Inscribe');
   }
-
-  const txid = result.txid.toLowerCase();
-  return { txid, origin: `${txid}_0` };
 }
 
 export function wrapWalletError(err: unknown, verb: string): Error {
@@ -149,6 +237,16 @@ export function wrapWalletError(err: unknown, verb: string): Error {
   }
   if (lower.includes('not-connected') || lower.includes('locked')) {
     return new Error('Unlock Yours Wallet and connect it to Mashinals.');
+  }
+  if (
+    lower.includes('no-txid') ||
+    lower.includes('module-left-signable') ||
+    lower.includes('txid-returned')
+  ) {
+    return new Error(
+      `${verb} finished but Yours did not return a txid. Check the extension's activity — ` +
+        'the mint may already be on-chain. Avoid retrying until you confirm.',
+    );
   }
   return new Error(raw || `${verb} failed in Yours Wallet.`);
 }
