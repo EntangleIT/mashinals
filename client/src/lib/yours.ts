@@ -208,39 +208,28 @@ async function runWalletAction<T extends { txid?: string; error?: string }>(
 }
 
 /**
- * Address that new inscriptions lock to.
+ * Address that new inscriptions lock to, or `null` for default self (ordinals basket).
  *
- * Priority:
- * 1. Explicit override
- * 2. Saved "mint to" preference (Yours legacy Ordinals receive, e.g. 1DHBH…)
- * 3. P1SAT ordinal deposit (`1sat 1`) — not the same as Yours' legacy HD ord address
+ * Prefer `null` (omit destination) so Yours stores customInstructions and can
+ * list/sell on 1sat.market. A bare P2PKH mint-to address often shows on explorers
+ * but fails `sellOrdinal` with missing-custom-instructions.
  */
-export async function resolveMintDestination(override?: string): Promise<string> {
+export async function resolveMintDestination(
+  override?: string,
+): Promise<string | null> {
   const preferred = (override ?? getMintToAddress()).trim();
-  if (preferred) {
-    if (!isLikelyBsvAddress(preferred)) {
-      throw new Error('Mint-to address must be a mainnet BSV address starting with 1.');
-    }
-    return preferred;
+  if (!preferred) return null;
+  if (!isLikelyBsvAddress(preferred)) {
+    throw new Error('Mint-to address must be a mainnet BSV address starting with 1.');
   }
-  const ctx = requireContext();
-  const { derivations } = await deriveDepositAddresses.execute(ctx, {
-    startIndex: 0,
-    count: 2,
-  });
-  const ord = derivations[1]?.address ?? derivations[0]?.address;
-  if (!ord) {
-    throw new Error('Yours Wallet did not return an ordinal deposit address.');
-  }
-  return ord;
+  return preferred;
 }
 
 /**
  * Inscribe a PNG (or other) payload via Yours / BRC-100 wallet.
- * Locks to the mint-to address (preference or P1SAT deposit).
- * Uses the local createAction pipeline (no usePermissionModule — that path
- * often returns no-txid-returned from Yours).
- * Returns origin outpoint (txid_0).
+ * Default: lock to self in the ordinals basket (listable on 1sat.market).
+ * Optional mint-to address: locks to that P2PKH (explorer-visible) but Yours
+ * may not be able to list it.
  */
 export async function inscribeWithYours(input: {
   base64Content: string;
@@ -256,7 +245,7 @@ export async function inscribeWithYours(input: {
         base64Content: input.base64Content,
         contentType: input.contentType,
         map: input.map,
-        destination: { address: destination },
+        ...(destination ? { destination: { address: destination } } : {}),
       }),
     );
 
@@ -265,7 +254,11 @@ export async function inscribeWithYours(input: {
     }
 
     const txid = result.txid.toLowerCase();
-    return { txid, origin: `${txid}_0`, destination };
+    return {
+      txid,
+      origin: `${txid}_0`,
+      destination: destination ?? 'yours-ordinals-basket',
+    };
   } catch (err) {
     if (err instanceof WalletTimeoutError) throw err;
     throw wrapWalletError(err, 'Inscribe');

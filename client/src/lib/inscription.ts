@@ -92,8 +92,9 @@ export async function inscribeMashinal(record: MashinalRecord): Promise<Inscribe
       destination,
       svgHash,
       message:
-        `Broadcast to ${destination} — origin ${origin}. ` +
-        'Refresh Ordinals in Yours after confirmation. Do not mint again.',
+        destination === 'yours-ordinals-basket'
+          ? `Broadcast into your Yours ordinals basket — origin ${origin}. You can list it from Yours for 1sat.market. Do not mint again.`
+          : `Broadcast to ${destination} — origin ${origin}. Address-locked mints may not be listable from Yours (missing basket metadata). Do not mint again.`,
     };
   } catch (err) {
     throw wrapWalletError(err, 'Inscribe');

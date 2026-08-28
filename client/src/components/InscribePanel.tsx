@@ -46,8 +46,8 @@ export function InscribePanel({ record }: Props) {
     setErr(null);
     setMsg(
       trimmed
-        ? `New mints will lock to ${trimmed}`
-        : 'Mint-to cleared — will use the connected P1SAT ordinal deposit address.',
+        ? `Mint-to set to ${trimmed}. Note: address-locked mints often cannot be listed on 1sat.market from Yours.`
+        : 'Mint-to cleared — new mints go to the Yours ordinals basket (listable).',
     );
   }
 
@@ -201,8 +201,9 @@ export function InscribePanel({ record }: Props) {
             }}
           />
           <span className="muted" style={{ fontSize: '0.75rem' }}>
-            Connected P1SAT deposit is {session?.addresses.ordAddress ?? '…'} — that is often not the
-            legacy Ordinals address shown in Yours. Paste yours (e.g. 1DHBH…) so new mints lock there.
+            Leave blank to mint into the Yours ordinals basket (required to list on 1sat.market).
+            Pasting a receive address (e.g. 1DHBH…) locks the 1-sat there for explorers, but Yours
+            usually cannot complete a market listing for those.
           </span>
         </label>
       )}
