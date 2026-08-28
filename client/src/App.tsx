@@ -2,10 +2,12 @@ import { useEffect } from 'react';
 import { Link, NavLink, Outlet } from 'react-router-dom';
 import { useMashStore } from './store';
 import { assertPartKitSync } from './pixel/render';
+import { WalletButton } from './components/WalletButton';
+import { useYoursWallet } from './lib/wallet-store';
 
 export function App() {
   const hydrateStarters = useMashStore((s) => s.hydrateStarters);
-  const wallet = useMashStore((s) => s.wallet);
+  const walletStatus = useYoursWallet((s) => s.status);
 
   useEffect(() => {
     hydrateStarters();
@@ -32,9 +34,8 @@ export function App() {
           <NavLink to="/feed" className={({ isActive }) => (isActive ? 'active' : '')}>
             Feed
           </NavLink>
-          <span className="badge" title={wallet.paymentAddress ?? ''}>
-            {wallet.connected ? 'WALLET' : 'PLAY'}
-          </span>
+          <WalletButton />
+          <span className="badge">{walletStatus === 'connected' ? 'YOURS' : 'PLAY'}</span>
         </nav>
       </header>
       <main className="main">

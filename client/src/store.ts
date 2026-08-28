@@ -15,12 +15,6 @@ interface MashState {
   slotB: string | null;
   lastResultId: string | null;
   lastWasNew: boolean;
-  wallet: {
-    connected: boolean;
-    paymentAddress: string | null;
-    ordinalAddress: string | null;
-    provider: string | null;
-  };
   hydrateStarters: () => void;
   selectForSlot: (id: string) => void;
   setSlot: (slot: 'A' | 'B', id: string | null) => void;
@@ -30,8 +24,6 @@ interface MashState {
     id: string,
     data: { origin: string; txid: string; demo: boolean; svgHash: string },
   ) => void;
-  setWallet: (w: MashState['wallet']) => void;
-  disconnectWallet: () => void;
 }
 
 function starterMap(): Record<string, MashinalRecord> {
@@ -49,12 +41,6 @@ export const useMashStore = create<MashState>()(
       slotB: null,
       lastResultId: null,
       lastWasNew: false,
-      wallet: {
-        connected: false,
-        paymentAddress: null,
-        ordinalAddress: null,
-        provider: null,
-      },
 
       hydrateStarters: () => {
         set((state) => {
@@ -189,24 +175,12 @@ export const useMashStore = create<MashState>()(
           return { discovered: { ...state.discovered, [id]: updated } };
         });
       },
-
-      setWallet: (wallet) => set({ wallet }),
-      disconnectWallet: () =>
-        set({
-          wallet: {
-            connected: false,
-            paymentAddress: null,
-            ordinalAddress: null,
-            provider: null,
-          },
-        }),
     }),
     {
       name: 'mashinals-v1',
       partialize: (s) => ({
         discovered: s.discovered,
         recipes: s.recipes,
-        wallet: s.wallet,
       }),
     },
   ),

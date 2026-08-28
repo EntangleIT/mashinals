@@ -2,42 +2,42 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { MashinalRecord } from '@mashinals/shared';
 import { useMashStore } from '../store';
-import { connectWallet, disconnectWallet } from '../lib/wallet';
+import { useYoursWallet } from '../lib/wallet-store';
 import { demoInscribe, inscribeMashinal } from '../lib/inscription';
 import { reportInscription } from '../lib/api';
 import { PixelSprite } from '../pixel/PixelSprite';
+import { YOURS_CHROME, YOURS_SITE, whatsonchainUrl } from '../lib/yours';
 
 interface Props {
   record: MashinalRecord;
 }
 
 export function InscribePanel({ record }: Props) {
-  const wallet = useMashStore((s) => s.wallet);
-  const setWallet = useMashStore((s) => s.setWallet);
-  const disconnect = useMashStore((s) => s.disconnectWallet);
   const markInscribed = useMashStore((s) => s.markInscribed);
+  const { status, session, connect, disconnect, error: walletError } = useYoursWallet();
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
   const alreadyOnChain = Boolean(record.origin);
   const hasDemo = Boolean(record.demoOrigin) && !alreadyOnChain;
+  const connected = status === 'connected' && Boolean(session);
 
   async function onConnect() {
     setErr(null);
     setMsg(null);
     try {
-      const session = await connectWallet();
-      setWallet(session);
-      setMsg(`Connected ${session.provider}: ${session.ordinalAddress?.slice(0, 10)}…`);
+      const next = await connect();
+      setMsg(
+        `Connected ${next.provider}: ${next.addresses.ordAddress.slice(0, 8)}…${next.addresses.ordAddress.slice(-4)}`,
+      );
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'Connect failed');
     }
   }
 
   async function onDisconnect() {
-    await disconnectWallet(wallet.provider);
-    disconnect();
+    await disconnect();
     setMsg('Wallet disconnected');
   }
 
@@ -69,18 +69,22 @@ export function InscribePanel({ record }: Props) {
   async function onInscribe() {
     setBusy(true);
     setErr(null);
+    setMsg(null);
     try {
-      const result = await inscribeMashinal(record, wallet);
+      if (!connected) {
+        await connect();
+      }
+      const result = await inscribeMashinal(record);
       markInscribed(record.id, {
         origin: result.origin,
         txid: result.txid,
-        demo: result.demo,
+        demo: false,
         svgHash: result.svgHash,
       });
       await reportInscription(record, {
         origin: result.origin,
         txid: result.txid,
-        demo: result.demo,
+        demo: false,
         svgHash: result.svgHash,
       });
       setMsg(result.message);
@@ -114,7 +118,10 @@ export function InscribePanel({ record }: Props) {
         <div>
           <span className="badge">ON-CHAIN</span>
           <p className="muted" style={{ margin: '0.4rem 0 0', fontSize: '0.85rem' }}>
-            origin {record.origin}
+            origin{' '}
+            <a href={whatsonchainUrl(record.origin!)} target="_blank" rel="noreferrer">
+              {record.origin}
+            </a>
           </p>
         </div>
       )}
@@ -128,9 +135,24 @@ export function InscribePanel({ record }: Props) {
       )}
 
       <div className="cta-row">
-        {!wallet.connected ? (
-          <button type="button" className="btn btn-cyan" onClick={onConnect} disabled={busy}>
-            Connect wallet
+        {status === 'missing' ? (
+          <a
+            className="btn btn-cyan"
+            href={YOURS_CHROME}
+            target="_blank"
+            rel="noreferrer"
+            style={{ textDecoration: 'none' }}
+          >
+            Install Yours Wallet
+          </a>
+        ) : !connected ? (
+          <button
+            type="button"
+            className="btn btn-cyan"
+            onClick={onConnect}
+            disabled={busy || status === 'connecting' || status === 'detecting'}
+          >
+            {status === 'connecting' ? 'Connecting…' : 'Connect Yours Wallet'}
           </button>
         ) : (
           <button type="button" className="btn btn-ghost" onClick={onDisconnect} disabled={busy}>
@@ -141,7 +163,7 @@ export function InscribePanel({ record }: Props) {
           type="button"
           className="btn"
           onClick={onInscribe}
-          disabled={busy || !wallet.connected || alreadyOnChain}
+          disabled={busy || alreadyOnChain || status === 'missing' || status === 'detecting'}
         >
           Inscribe 1Sat
         </button>
@@ -153,11 +175,25 @@ export function InscribePanel({ record }: Props) {
         </Link>
       </div>
 
+      {connected && session && (
+        <p className="muted" style={{ margin: 0, fontSize: '0.8rem' }}>
+          Ordinal {session.addresses.ordAddress.slice(0, 10)}… · pay{' '}
+          {session.addresses.bsvAddress.slice(0, 10)}…
+          {session.balance ? ` · ${(session.balance.satoshis / 1e8).toFixed(4)} BSV` : ''}
+        </p>
+      )}
+
       {msg && <p style={{ margin: 0, color: 'var(--ok)' }}>{msg}</p>}
-      {err && <p style={{ margin: 0, color: 'var(--danger)' }}>{err}</p>}
+      {(err || walletError) && (
+        <p style={{ margin: 0, color: 'var(--danger)' }}>{err ?? walletError}</p>
+      )}
       <p className="muted" style={{ margin: 0, fontSize: '0.8rem' }}>
-        Inscribes a tiny 32×32 PNG pixel sprite + MAP metadata (name, caption, parents, genes). No
-        private keys leave your wallet. Demo mode stores a local preview ordinal only.
+        Live mint uses{' '}
+        <a href={YOURS_SITE} target="_blank" rel="noreferrer">
+          Yours Wallet
+        </a>{' '}
+        (BRC-100 / @1sat/actions) to inscribe a 32×32 PNG + MAP metadata. No private keys leave your
+        wallet. Demo mode stores a local preview only.
       </p>
     </div>
   );

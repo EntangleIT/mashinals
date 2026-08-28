@@ -23,17 +23,26 @@ No GatchaGo SVG path kits, no Three.js meshes, no photoreal AI images.
 
 1. Client composites the pixel sprite from genes.
 2. Client builds inscription: PNG bytes + MAP metadata (`app=mashinals`, name, caption, recipe, generation, genes, parent names / origin outpoints when known).
-3. User connects a BSV / 1Sat wallet (payment + ordinal address). **No hot private keys** are shipped or stored on the Worker.
-4. Wallet signs & broadcasts (`js-1sat-ord` `createOrdinals` / provider `inscribe()`).
+3. User connects **Yours Wallet** (payment + ordinal addresses via BRC-100). **No hot private keys** are shipped or stored on the Worker.
+4. Wallet signs & broadcasts via `@1sat/actions` `inscribe.execute`.
 5. Client reports `{txid, origin, …}` to the Worker, which indexes the public feed.
 
 **Demo Inscribe** writes a local “preview ordinal” labeled **NOT on-chain** so the UX is testable without a wallet.
 
+### Yours Wallet (live mint)
+
+Live connect + inscribe uses the modern BRC-100 stack (same as SatPress):
+
+- `@1sat/react` `WalletProvider` / `useWallet` (auto-detects Yours)
+- `@1sat/actions` `createContext` + `inscribe.execute` with MAP metadata
+- `@1sat/client` `OneSatServices('main')`
+
+Install [Yours Wallet](https://yours.org) (Chrome extension), unlock it, then **Connect Yours Wallet** on the board. Inscribe prompts the wallet — no hot keys in the app or Worker.
+
 ### Libraries
 
-- `js-1sat-ord` + `@bsv/sdk` for ordinal construction
-- Browser wallet connect (1sat / Yours-compatible `window.onesat` / `window.yours`)
-- Docs: [docs.1satordinals.com](https://docs.1satordinals.com), [js.1satordinals.com](https://js.1satordinals.com/)
+- `@1sat/react`, `@1sat/actions`, `@1sat/connect`, `@1sat/client`, `@bsv/sdk`
+- Docs: [Yours Provider API](https://yours-wallet.gitbook.io/provider-api), [docs.1satordinals.com](https://docs.1satordinals.com)
 
 ## Repo layout
 

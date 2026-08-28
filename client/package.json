@@ -9,10 +9,13 @@
     "preview": "vite preview --port 45321 --host 127.0.0.1"
   },
   "dependencies": {
+    "@1sat/actions": "^0.0.199",
+    "@1sat/client": "^0.0.50",
+    "@1sat/connect": "^0.0.89",
+    "@1sat/react": "^0.0.86",
     "@bsv/sdk": "^2.4.2",
     "@mashinals/shared": "*",
     "framer-motion": "^12.6.2",
-    "js-1sat-ord": "^0.1.91",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.4.0",

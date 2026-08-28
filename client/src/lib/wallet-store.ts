@@ -1,0 +1,126 @@
+import { create } from 'zustand';
+import type { WalletInterface } from '@bsv/sdk';
+import {
+  buildContext,
+  buildSession,
+  getActiveContext,
+  setActiveContext,
+  type YoursSession,
+} from './yours';
+
+export type AppWalletStatus =
+  | 'detecting'
+  | 'missing'
+  | 'available'
+  | 'connecting'
+  | 'connected';
+
+type WalletState = {
+  status: AppWalletStatus;
+  session: YoursSession | null;
+  error: string | null;
+  hydrated: boolean;
+  syncWallet: (input: {
+    status: 'disconnected' | 'detecting' | 'selecting' | 'connecting' | 'connected';
+    wallet: WalletInterface | null;
+    identityKey: string | null;
+    providerType: string | null;
+    hasProviders: boolean;
+  }) => Promise<void>;
+  connect: () => Promise<YoursSession>;
+  disconnect: () => Promise<void>;
+};
+
+let connector: ((providerType?: string) => Promise<void>) | null = null;
+let disconnector: (() => void) | null = null;
+
+export function registerWalletControls(
+  connectFn: (providerType?: string) => Promise<void>,
+  disconnectFn: () => void,
+): void {
+  connector = connectFn;
+  disconnector = disconnectFn;
+}
+
+let syncing = false;
+
+export const useYoursWallet = create<WalletState>((set, get) => ({
+  status: 'detecting',
+  session: null,
+  error: null,
+  hydrated: false,
+
+  syncWallet: async ({ status, wallet, identityKey, providerType, hasProviders }) => {
+    if (syncing) return;
+    syncing = true;
+    try {
+      if (status !== 'connected') {
+        setActiveContext(null);
+        set((prev) => ({
+          status:
+            status === 'connecting' || status === 'selecting'
+              ? 'connecting'
+              : status === 'detecting'
+                ? prev.hydrated
+                  ? prev.status
+                  : 'detecting'
+                : hasProviders
+                  ? 'available'
+                  : 'missing',
+          session: null,
+          hydrated: true,
+        }));
+        return;
+      }
+      if (!wallet) return;
+      setActiveContext(buildContext(wallet));
+      try {
+        const session = await buildSession(identityKey ?? '', providerType);
+        set({ status: 'connected', session, error: null, hydrated: true });
+      } catch (err) {
+        set({
+          status: 'available',
+          session: null,
+          error: err instanceof Error ? err.message : 'Could not read wallet addresses.',
+          hydrated: true,
+        });
+      }
+    } finally {
+      syncing = false;
+    }
+  },
+
+  connect: async () => {
+    if (!connector) {
+      throw new Error(
+        'Yours Wallet is not ready yet. Install Yours from yours.org, unlock it, then reload this page.',
+      );
+    }
+    set({ status: 'connecting', error: null });
+    try {
+      await connector();
+      for (let i = 0; i < 80 && get().status !== 'connected'; i++) {
+        await new Promise((r) => setTimeout(r, 100));
+      }
+      const session = get().session;
+      if (get().status !== 'connected' || !session) {
+        throw new Error(get().error ?? 'Yours Wallet did not finish connecting.');
+      }
+      return session;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Could not connect Yours Wallet.';
+      set({
+        status: getActiveContext() ? 'available' : 'missing',
+        error: message,
+        hydrated: true,
+      });
+      throw err instanceof Error ? err : new Error(message);
+    }
+  },
+
+  disconnect: async () => {
+    disconnector?.();
+    setActiveContext(null);
+    set({ status: 'available', session: null, error: null });
+  },
+}));

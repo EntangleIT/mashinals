@@ -6,6 +6,21 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     base,
+    build: {
+      chunkSizeWarningLimit: 3200,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules/@1sat') || id.includes('node_modules/@bsv')) {
+              return '1sat';
+            }
+          },
+        },
+      },
+    },
+    optimizeDeps: {
+      exclude: ['bun:sqlite'],
+    },
     server: {
       port: 45321,
       host: '127.0.0.1',
