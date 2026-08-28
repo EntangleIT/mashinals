@@ -92,8 +92,8 @@ export async function inscribeMashinal(record: MashinalRecord): Promise<Inscribe
       destination,
       svgHash,
       message:
-        `Broadcast to your ordinal deposit ${destination.slice(0, 8)}… — origin ${origin}. ` +
-        'Pull to refresh Ordinals in Yours after the indexer catches up. Do not mint again.',
+        `Broadcast to ${destination} — origin ${origin}. ` +
+        'Refresh Ordinals in Yours after confirmation. Do not mint again.',
     };
   } catch (err) {
     throw wrapWalletError(err, 'Inscribe');

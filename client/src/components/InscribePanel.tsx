@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { MashinalRecord } from '@mashinals/shared';
 import { useMashStore } from '../store';
@@ -6,7 +6,14 @@ import { useYoursWallet } from '../lib/wallet-store';
 import { demoInscribe, inscribeMashinal } from '../lib/inscription';
 import { reportInscription } from '../lib/api';
 import { PixelSprite } from '../pixel/PixelSprite';
-import { YOURS_SITE, onesatOriginUrl, whatsonchainUrl } from '../lib/yours';
+import {
+  YOURS_SITE,
+  getMintToAddress,
+  isLikelyBsvAddress,
+  onesatOriginUrl,
+  setMintToAddress,
+  whatsonchainUrl,
+} from '../lib/yours';
 
 interface Props {
   record: MashinalRecord;
@@ -18,18 +25,39 @@ export function InscribePanel({ record }: Props) {
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const [mintTo, setMintTo] = useState(() => getMintToAddress());
+
+  useEffect(() => {
+    setMintTo(getMintToAddress());
+  }, [session?.addresses.ordAddress]);
 
   const alreadyOnChain = Boolean(record.origin);
   const hasDemo = Boolean(record.demoOrigin) && !alreadyOnChain;
   const connected = status === 'connected' && Boolean(session);
 
+  function saveMintTo(next: string) {
+    const trimmed = next.trim();
+    setMintTo(trimmed);
+    if (trimmed && !isLikelyBsvAddress(trimmed)) {
+      setErr('Mint-to must be a mainnet BSV address starting with 1.');
+      return;
+    }
+    setMintToAddress(trimmed);
+    setErr(null);
+    setMsg(
+      trimmed
+        ? `New mints will lock to ${trimmed}`
+        : 'Mint-to cleared — will use the connected P1SAT ordinal deposit address.',
+    );
+  }
+
   async function onConnect() {
     setErr(null);
     setMsg(null);
     try {
-      const next = await connect();
+      await connect();
       setMsg(
-        `Connected ${next.provider}: ${next.addresses.ordAddress.slice(0, 8)}…${next.addresses.ordAddress.slice(-4)}`,
+        'Connected. Set Mint to your Yours Ordinals receive address if it differs from the P1SAT deposit.',
       );
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'Connect failed');
@@ -71,6 +99,12 @@ export function InscribePanel({ record }: Props) {
     setErr(null);
     setMsg(null);
     try {
+      if (mintTo.trim()) {
+        if (!isLikelyBsvAddress(mintTo)) {
+          throw new Error('Mint-to must be a mainnet BSV address starting with 1.');
+        }
+        setMintToAddress(mintTo.trim());
+      }
       if (!connected) {
         await connect();
       }
@@ -128,10 +162,8 @@ export function InscribePanel({ record }: Props) {
             </a>
           </p>
           <p className="muted" style={{ margin: '0.35rem 0 0', fontSize: '0.8rem' }}>
-            New mints lock to your Yours ordinal deposit address so the wallet can list them. Earlier
-            mints may have used a one-off key and stay invisible in the Ordinals tab even though they
-            are on-chain — use the explorer links above. Pull-to-refresh Ordinals after confirmation;
-            do not mint again.
+            Earlier mints may have locked to a one-off key or a P1SAT deposit — not your legacy Yours
+            Ordinals address. Set Mint to below, then mint a new character to land on that address.
           </p>
         </div>
       )}
@@ -142,6 +174,37 @@ export function InscribePanel({ record }: Props) {
             {record.demoOrigin}
           </p>
         </div>
+      )}
+
+      {connected && (
+        <label style={{ display: 'grid', gap: '0.35rem', fontSize: '0.85rem' }}>
+          <span>
+            Mint to (Yours Ordinals receive){' '}
+            <span className="muted">— paste the address you use in Yours</span>
+          </span>
+          <input
+            type="text"
+            value={mintTo}
+            placeholder={session?.addresses.ordAddress ?? '1…'}
+            onChange={(e) => setMintTo(e.target.value)}
+            onBlur={() => saveMintTo(mintTo)}
+            spellCheck={false}
+            autoComplete="off"
+            style={{
+              fontFamily: 'ui-monospace, monospace',
+              fontSize: '0.8rem',
+              padding: '0.45rem 0.55rem',
+              borderRadius: '6px',
+              border: '1px solid var(--border, #333)',
+              background: 'var(--panel, #12081c)',
+              color: 'inherit',
+            }}
+          />
+          <span className="muted" style={{ fontSize: '0.75rem' }}>
+            Connected P1SAT deposit is {session?.addresses.ordAddress ?? '…'} — that is often not the
+            legacy Ordinals address shown in Yours. Paste yours (e.g. 1DHBH…) so new mints lock there.
+          </span>
+        </label>
       )}
 
       <div className="cta-row">
@@ -181,16 +244,13 @@ export function InscribePanel({ record }: Props) {
           <a href={YOURS_SITE} target="_blank" rel="noreferrer">
             Yours
           </a>{' '}
-          Chrome extension on this tab, then click Connect. Detection happens when you connect
-          (BRC-100) — Mashinals will not send you to the Chrome Web Store if the wallet is already
-          installed.
+          Chrome extension on this tab, then click Connect.
         </p>
       )}
 
       {connected && session && (
         <p className="muted" style={{ margin: 0, fontSize: '0.8rem' }}>
-          Ordinal {session.addresses.ordAddress.slice(0, 10)}… · pay{' '}
-          {session.addresses.bsvAddress.slice(0, 10)}…
+          Pay {session.addresses.bsvAddress.slice(0, 10)}…
           {session.balance ? ` · ${(session.balance.satoshis / 1e8).toFixed(4)} BSV` : ''}
         </p>
       )}
@@ -204,8 +264,7 @@ export function InscribePanel({ record }: Props) {
         <a href={YOURS_SITE} target="_blank" rel="noreferrer">
           Yours Wallet
         </a>{' '}
-        (BRC-100 / @1sat/actions) to inscribe a 32×32 PNG + MAP metadata. No private keys leave your
-        wallet. Demo mode stores a local preview only.
+        to inscribe a 32×32 PNG + MAP. No private keys leave your wallet.
       </p>
     </div>
   );

@@ -21,6 +21,33 @@ export const WOC_TX = 'https://whatsonchain.com/tx';
 /** 1Sat ordinal explorer (indexes after broadcast; may lag while in mempool). */
 export const ONESAT_ORIGIN = 'https://ordinals.gorillapool.io/txo/origin';
 
+/** Local preference: lock new inscriptions to this P2PKH (Yours legacy ord receive). */
+const MINT_TO_KEY = 'mashinals:mint-to-address';
+
+export function getMintToAddress(): string {
+  try {
+    return (localStorage.getItem(MINT_TO_KEY) ?? '').trim();
+  } catch {
+    return '';
+  }
+}
+
+export function setMintToAddress(address: string): void {
+  const next = address.trim();
+  try {
+    if (!next) localStorage.removeItem(MINT_TO_KEY);
+    else localStorage.setItem(MINT_TO_KEY, next);
+  } catch {
+    // ignore
+  }
+}
+
+/** Loose mainnet P2PKH check (1… Base58). */
+export function isLikelyBsvAddress(value: string): boolean {
+  const v = value.trim();
+  return /^1[1-9A-HJ-NP-Za-km-z]{24,33}$/.test(v);
+}
+
 export type YoursAddresses = {
   bsvAddress: string;
   ordAddress: string;
@@ -181,11 +208,21 @@ async function runWalletAction<T extends { txid?: string; error?: string }>(
 }
 
 /**
- * Resolve the stable ordinal deposit address (P1SAT `1sat 1`).
- * Default inscribe locks to a one-off `inscribe-<random>` key that Yours often
- * never lists in its Ordinals UI — deposit addresses are what the wallet syncs.
+ * Address that new inscriptions lock to.
+ *
+ * Priority:
+ * 1. Explicit override
+ * 2. Saved "mint to" preference (Yours legacy Ordinals receive, e.g. 1DHBH…)
+ * 3. P1SAT ordinal deposit (`1sat 1`) — not the same as Yours' legacy HD ord address
  */
-export async function resolveOrdDepositAddress(): Promise<string> {
+export async function resolveMintDestination(override?: string): Promise<string> {
+  const preferred = (override ?? getMintToAddress()).trim();
+  if (preferred) {
+    if (!isLikelyBsvAddress(preferred)) {
+      throw new Error('Mint-to address must be a mainnet BSV address starting with 1.');
+    }
+    return preferred;
+  }
   const ctx = requireContext();
   const { derivations } = await deriveDepositAddresses.execute(ctx, {
     startIndex: 0,
@@ -200,7 +237,7 @@ export async function resolveOrdDepositAddress(): Promise<string> {
 
 /**
  * Inscribe a PNG (or other) payload via Yours / BRC-100 wallet.
- * Locks to the ordinal deposit address so Yours / indexer sync can show it.
+ * Locks to the mint-to address (preference or P1SAT deposit).
  * Uses the local createAction pipeline (no usePermissionModule — that path
  * often returns no-txid-returned from Yours).
  * Returns origin outpoint (txid_0).
@@ -209,19 +246,16 @@ export async function inscribeWithYours(input: {
   base64Content: string;
   contentType: string;
   map: Record<string, string>;
-  /** Defaults to the connected wallet's ordinal deposit address. */
   destinationAddress?: string;
 }): Promise<{ txid: string; origin: string; destination: string }> {
   const ctx = requireContext();
-  const destination =
-    input.destinationAddress?.trim() || (await resolveOrdDepositAddress());
+  const destination = await resolveMintDestination(input.destinationAddress);
   try {
     const result = await runWalletAction('Inscribe', INSCRIBE_DESCRIPTION, () =>
       inscribe.execute(ctx, {
         base64Content: input.base64Content,
         contentType: input.contentType,
         map: input.map,
-        // Explicit deposit address — not the default ephemeral inscribe-* key.
         destination: { address: destination },
       }),
     );
