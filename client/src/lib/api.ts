@@ -1,6 +1,9 @@
 import type { MashinalRecord, PublicFeedItem } from '@mashinals/shared';
 
-const API_BASE = import.meta.env.VITE_API_URL?.replace(/\/$/, '') || '/api';
+/** Same-origin API under /mashinals/api in prod; /api via Vite proxy in local client. */
+const API_BASE =
+  import.meta.env.VITE_API_URL?.replace(/\/$/, '') ||
+  (import.meta.env.BASE_URL === '/mashinals/' ? '/mashinals/api' : '/api');
 
 async function req<T>(path: string, init?: RequestInit): Promise<T | null> {
   try {
@@ -23,12 +26,15 @@ export async function fetchFeed(limit = 40): Promise<PublicFeedItem[]> {
   return data?.items ?? [];
 }
 
-export async function reportInscription(record: MashinalRecord, opts: {
-  origin: string;
-  txid: string;
-  demo: boolean;
-  svgHash: string;
-}): Promise<boolean> {
+export async function reportInscription(
+  record: MashinalRecord,
+  opts: {
+    origin: string;
+    txid: string;
+    demo: boolean;
+    svgHash: string;
+  },
+): Promise<boolean> {
   const res = await req<{ ok: boolean }>('/inscriptions', {
     method: 'POST',
     body: JSON.stringify({

@@ -73,7 +73,12 @@ No secrets are required to play. Never commit `.env`, `.dev.vars`, or account-sp
 
 ## Deploy (new Cloudflare Worker)
 
-One Worker named **`mashinals`** serves the frontend (Workers Static Assets) and the `/api/*` routes. D1 database name: **`mashinals-db`**.
+One Worker named **`mashinals`** serves the frontend (Workers Static Assets) and API.
+
+- **Production URL:** https://entangleit.com/mashinals/
+- **workers.dev:** https://mashinals.richard-hein.workers.dev
+- **Zone routes:** `entangleit.com/mashinals` + `entangleit.com/mashinals/*`
+- **D1:** `mashinals-db` (`c1aefe08-d9f3-41da-86ba-4cc7dcfe9c55`)
 
 ```bash
 # 1) Auth (once)
@@ -86,16 +91,14 @@ npx wrangler login
 # 3) Apply migrations to remote D1
 npm run db:migrate
 
-# 4) Build client + shared, then deploy THIS worker only
+# 4) Build client (base /mashinals/) + deploy Worker + zone routes
 npm run deploy
-# equivalent: npm run build && npm run deploy -w worker
 ```
 
-After deploy, open the `*.workers.dev` URL Wrangler prints (or attach a custom route later). Frontend and API share that origin — no separate Pages project, no copying files into another site.
+The Worker strips the `/mashinals` prefix before serving assets (same pattern as SatPress / BSV Bounties). Do **not** copy files into the portfolio Pages dir or reuse `gachago-api`.
 
-Optional: set `CORS_ORIGIN` in `worker/wrangler.jsonc` `vars` if you ever front the API from a different origin (not needed for the default same-origin setup).
+Optional: set `CORS_ORIGIN` in `worker/wrangler.jsonc` `vars` (defaults to `https://entangleit.com`).
 
-There are **no required Worker secrets** for the core toy (wallet keys never leave the browser). If you later enable optional AI flourish, document those secrets separately and keep them out of git.
 
 ## Tests
 
