@@ -1,0 +1,24 @@
+{
+  "name": "mashinals",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "shared",
+    "client",
+    "worker"
+  ],
+  "scripts": {
+    "postinstall": "npm run build -w shared",
+    "dev": "npm run build -w shared && concurrently -n shared,client,worker -c magenta,cyan,yellow \"npm run dev -w shared\" \"npm run dev -w client\" \"npm run dev -w worker\"",
+    "dev:client": "npm run build -w shared && npm run dev -w client",
+    "dev:worker": "npm run build -w shared && npm run dev -w worker",
+    "build": "npm run build -w shared && npm run build -w client",
+    "build:worker": "npm run build -w shared && npm run build -w worker",
+    "test": "npm run test -w shared",
+    "deploy:api": "npm run deploy -w worker"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "typescript": "^5.8.2"
+  }
+}

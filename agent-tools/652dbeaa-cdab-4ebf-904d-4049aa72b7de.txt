@@ -1,0 +1,1306 @@
+{
+ "sha": "dcd45925256414b767aea5ea679756e52d21a69c",
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/trees/dcd45925256414b767aea5ea679756e52d21a69c",
+ "tree": [
+ {
+ "path": ".gitignore",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "eb47b3c4366e803856c5f329da0185a293ae81fe",
+ "size": 204,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/eb47b3c4366e803856c5f329da0185a293ae81fe"
+ },
+ {
+ "path": "README.md",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "25aa4c5f7195fedb14837491bb04b0219c886992",
+ "size": 1019,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/25aa4c5f7195fedb14837491bb04b0219c886992"
+ },
+ {
+ "path": "assets",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "63c12edebdc8db1c77c8f8ea4a228e8f8cba003b",
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/trees/63c12edebdc8db1c77c8f8ea4a228e8f8cba003b"
+ },
+ {
+ "path": "assets/references",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "afa97fc3ca60602a1eb1c375eebba0f22947b1d2",
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/trees/afa97fc3ca60602a1eb1c375eebba0f22947b1d2"
+ },
+ {
+ "path": "assets/references/gachago-ref-front.png",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "83af8b79f8018413b77d4899db574417e3d133ab",
+ "size": 1474124,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/83af8b79f8018413b77d4899db574417e3d133ab"
+ },
+ {
+ "path": "assets/references/gachago-ref-threequarter.png",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "f25b8e5dc4fabd6e9d8cbc7b40509f8ce26fcfac",
+ "size": 1577945,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/f25b8e5dc4fabd6e9d8cbc7b40509f8ce26fcfac"
+ },
+ {
+ "path": "client",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "2947ccffa3d3e080a28a7d4d250b9d5e2800aa6d",
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/trees/2947ccffa3d3e080a28a7d4d250b9d5e2800aa6d"
+ },
+ {
+ "path": "client/index.html",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "d057fae280ad1e511197b9061d70df5f97864d56",
+ "size": 762,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/d057fae280ad1e511197b9061d70df5f97864d56"
+ },
+ {
+ "path": "client/package.json",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "3542cefd60c778b14eddf36f7bb12df45d4c8b0a",
+ "size": 594,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/3542cefd60c778b14eddf36f7bb12df45d4c8b0a"
+ },
+ {
+ "path": "client/public",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "2a2ab56b3dcc62a81f75cdced9c893fd3ea46480",
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/trees/2a2ab56b3dcc62a81f75cdced9c893fd3ea46480"
+ },
+ {
+ "path": "client/public/_headers",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "0806ce780806cffcfd2321afb70ba974da06020c",
+ "size": 119,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/0806ce780806cffcfd2321afb70ba974da06020c"
+ },
+ {
+ "path": "client/public/models",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "78b1f15f9d20d1819229f5e75ebf708e7dffc5d4",
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/trees/78b1f15f9d20d1819229f5e75ebf708e7dffc5d4"
+ },
+ {
+ "path": "client/public/models/chibi_idol.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "ef091a21dac93c656d03c6136fb38f232b1a717b",
+ "size": 1999696,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/ef091a21dac93c656d03c6136fb38f232b1a717b"
+ },
+ {
+ "path": "client/public/models/chibi_idol_preview.webp",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "f3ef24a5fda2b7817ff811a8fc48bbe0610cd31a",
+ "size": 5702,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/f3ef24a5fda2b7817ff811a8fc48bbe0610cd31a"
+ },
+ {
+ "path": "client/public/models/parts",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "77477be2026489db963335d69244b12ed652fc8b",
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/trees/77477be2026489db963335d69244b12ed652fc8b"
+ },
+ {
+ "path": "client/public/models/parts/accessories",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "cccd3b9e75d498b351e2952163bae6bbbd510fb0",
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/trees/cccd3b9e75d498b351e2952163bae6bbbd510fb0"
+ },
+ {
+ "path": "client/public/models/parts/accessories/back_01.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "d3ae78ef86f6e3891a2ee272e4cb328f344a0f1b",
+ "size": 116456,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/d3ae78ef86f6e3891a2ee272e4cb328f344a0f1b"
+ },
+ {
+ "path": "client/public/models/parts/accessories/back_02.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "3864463b65b2a3c69fb4e86b3d0ea271970c0c3b",
+ "size": 116460,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/3864463b65b2a3c69fb4e86b3d0ea271970c0c3b"
+ },
+ {
+ "path": "client/public/models/parts/accessories/glasses_01.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "d318dec458efb003312418b7474e5349ef305506",
+ "size": 39744,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/d318dec458efb003312418b7474e5349ef305506"
+ },
+ {
+ "path": "client/public/models/parts/accessories/glasses_02.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "84be63960e40efa6ed3e8578970e271ae911b203",
+ "size": 202528,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/84be63960e40efa6ed3e8578970e271ae911b203"
+ },
+ {
+ "path": "client/public/models/parts/accessories/handheld_01.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "891a838f24fdf24a2858e7ae4caf318302372bfa",
+ "size": 121092,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/891a838f24fdf24a2858e7ae4caf318302372bfa"
+ },
+ {
+ "path": "client/public/models/parts/accessories/handheld_02.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "eea2c56e7f43fa3c1c463b6117b238b1b1d73194",
+ "size": 211524,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/eea2c56e7f43fa3c1c463b6117b238b1b1d73194"
+ },
+ {
+ "path": "client/public/models/parts/accessories/handheld_03.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "6592c6416131959b0c8a45b1a0e8aabdd24c1b42",
+ "size": 241528,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/6592c6416131959b0c8a45b1a0e8aabdd24c1b42"
+ },
+ {
+ "path": "client/public/models/parts/accessories/hat_01.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "682120ff98ea8c76ffb456ff77d4515b263c8b53",
+ "size": 116480,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/682120ff98ea8c76ffb456ff77d4515b263c8b53"
+ },
+ {
+ "path": "client/public/models/parts/accessories/hat_02.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "327bc993fd2819f9d12b2c47231e5c869fea99b6",
+ "size": 1698936,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/327bc993fd2819f9d12b2c47231e5c869fea99b6"
+ },
+ {
+ "path": "client/public/models/parts/accessories/hat_03.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "a34021181f6b42ce11b5c5c2c006e1962e2180f5",
+ "size": 21924,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/a34021181f6b42ce11b5c5c2c006e1962e2180f5"
+ },
+ {
+ "path": "client/public/models/parts/accessories/tail_01.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "ca506545b38a866a49d57210d6086ed66cdb0f0a",
+ "size": 327672,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/ca506545b38a866a49d57210d6086ed66cdb0f0a"
+ },
+ {
+ "path": "client/public/models/parts/accessories/tail_02.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "b967c179795d23c006dbb757a1467dbb08b0f2a0",
+ "size": 297588,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/b967c179795d23c006dbb757a1467dbb08b0f2a0"
+ },
+ {
+ "path": "client/public/models/parts/accessories/wings_01.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "3505e060396151e81e6745cda75e5ad1c2a9ef50",
+ "size": 232564,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/3505e060396151e81e6745cda75e5ad1c2a9ef50"
+ },
+ {
+ "path": "client/public/models/parts/accessories/wings_02.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "b74f540f066ed197937a3790062384a35b2dee72",
+ "size": 232548,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/b74f540f066ed197937a3790062384a35b2dee72"
+ },
+ {
+ "path": "client/public/models/parts/assembled",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "fcbdd701c63d4d322965f0172bfe46ca71edef36",
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/trees/fcbdd701c63d4d322965f0172bfe46ca71edef36"
+ },
+ {
+ "path": "client/public/models/parts/assembled/casual_lavender_00.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "d22b727b505755b2273c63c69a77286b97b0cc7d",
+ "size": 1693652,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/d22b727b505755b2273c63c69a77286b97b0cc7d"
+ },
+ {
+ "path": "client/public/models/parts/assembled/hoodie_pink_00.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "28d4ec0c8992c794dcc86a48b3ef5075c675294b",
+ "size": 2248296,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/28d4ec0c8992c794dcc86a48b3ef5075c675294b"
+ },
+ {
+ "path": "client/public/models/parts/assembled/sailor_pink_00.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "6442bfba996481b3f7decae14e14edbc09ee516a",
+ "size": 1884400,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/6442bfba996481b3f7decae14e14edbc09ee516a"
+ },
+ {
+ "path": "client/public/models/parts/body",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "0157ed5ced3bf7fa1afff3e160761f292fd62ddb",
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/trees/0157ed5ced3bf7fa1afff3e160761f292fd62ddb"
+ },
+ {
+ "path": "client/public/models/parts/body/base.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "f952e667ca9dcaa4957548e71cc5a83f8474c65d",
+ "size": 2664128,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/f952e667ca9dcaa4957548e71cc5a83f8474c65d"
+ },
+ {
+ "path": "client/public/models/parts/body/base_ai.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "fac29d8a42706fb68b0c5bfe264553bc63cfd17c",
+ "size": 1660484,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/fac29d8a42706fb68b0c5bfe264553bc63cfd17c"
+ },
+ {
+ "path": "client/public/models/parts/catalog.json",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "6bbe7d193ef0172f50aa4fe60883a022333849fa",
+ "size": 1390,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/6bbe7d193ef0172f50aa4fe60883a022333849fa"
+ },
+ {
+ "path": "client/public/models/parts/hair",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "2bb3285e5d3f60c82d8c929a657d0d6777396ce6",
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/trees/2bb3285e5d3f60c82d8c929a657d0d6777396ce6"
+ },
+ {
+ "path": "client/public/models/parts/hair/back_00.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "a9ebbb21406d81cd4f270a390d900b680fe38388",
+ "size": 168692,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/a9ebbb21406d81cd4f270a390d900b680fe38388"
+ },
+ {
+ "path": "client/public/models/parts/hair/back_01.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "3e9c90f4ffed57519bbfc33626b120eb5238471b",
+ "size": 576772,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/3e9c90f4ffed57519bbfc33626b120eb5238471b"
+ },
+ {
+ "path": "client/public/models/parts/hair/back_02.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "97c332894a524ec63b58e7f558c97ebf36c3dfe6",
+ "size": 181784,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/97c332894a524ec63b58e7f558c97ebf36c3dfe6"
+ },
+ {
+ "path": "client/public/models/parts/hair/front_00.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "a9cf9eb5e201a4548699efed280a2d7bd2d42077",
+ "size": 324404,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/a9cf9eb5e201a4548699efed280a2d7bd2d42077"
+ },
+ {
+ "path": "client/public/models/parts/hair/front_00_ai.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "a1f351a831f4fefd21eb044a24a4d1a1c490c9e3",
+ "size": 1400924,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/a1f351a831f4fefd21eb044a24a4d1a1c490c9e3"
+ },
+ {
+ "path": "client/public/models/parts/hair/front_01.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "77e751d3944add60b82b897aee9e5f3d02cd91f3",
+ "size": 194880,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/77e751d3944add60b82b897aee9e5f3d02cd91f3"
+ },
+ {
+ "path": "client/public/models/parts/hair/front_02.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "49aca99c92ae8657c546afa27db7b49aed63cec6",
+ "size": 563836,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/49aca99c92ae8657c546afa27db7b49aed63cec6"
+ },
+ {
+ "path": "client/public/models/parts/hair/front_02_ai.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "d176fdfd0e9dbe1a11812e26d086b1bf4757f872",
+ "size": 1832716,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/d176fdfd0e9dbe1a11812e26d086b1bf4757f872"
+ },
+ {
+ "path": "client/public/models/parts/hair/front_03.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "c1d75665153c91904b97c763a3d6620a28570ea2",
+ "size": 69228,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/c1d75665153c91904b97c763a3d6620a28570ea2"
+ },
+ {
+ "path": "client/public/models/parts/outfit",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "f85d285adb022d6b41ae5f894f6bd60b475a677a",
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/trees/f85d285adb022d6b41ae5f894f6bd60b475a677a"
+ },
+ {
+ "path": "client/public/models/parts/outfit/bottom_00.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "135701985874fce248cef94b13d1e54c0329c2ff",
+ "size": 138052,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/135701985874fce248cef94b13d1e54c0329c2ff"
+ },
+ {
+ "path": "client/public/models/parts/outfit/bottom_00_ai.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "dd6a955879021ecf1e8a85c0c926139c5ac7c127",
+ "size": 1640160,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/dd6a955879021ecf1e8a85c0c926139c5ac7c127"
+ },
+ {
+ "path": "client/public/models/parts/outfit/bottom_01.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "a78320d9010343c7d5a00292c06f7e9373da8f32",
+ "size": 138040,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/a78320d9010343c7d5a00292c06f7e9373da8f32"
+ },
+ {
+ "path": "client/public/models/parts/outfit/bottom_02.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "6be00f64d476f95888df9a05f3a1b744a3daba2d",
+ "size": 116480,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/6be00f64d476f95888df9a05f3a1b744a3daba2d"
+ },
+ {
+ "path": "client/public/models/parts/outfit/bottom_03.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "f20569ea7bc78974b12bcfaeda0be358930c4c60",
+ "size": 537344,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/f20569ea7bc78974b12bcfaeda0be358930c4c60"
+ },
+ {
+ "path": "client/public/models/parts/outfit/outerwear_01.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "1cc3113f116aba41f6eccda691fcbf31ea7f09ef",
+ "size": 116472,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/1cc3113f116aba41f6eccda691fcbf31ea7f09ef"
+ },
+ {
+ "path": "client/public/models/parts/outfit/outerwear_02.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "10f5116a0e6a07131695df74af9e229c307fc581",
+ "size": 116472,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/10f5116a0e6a07131695df74af9e229c307fc581"
+ },
+ {
+ "path": "client/public/models/parts/outfit/shoes_00.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "3305088ef826875d997b10eba8629797bcb242c9",
+ "size": 232620,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/3305088ef826875d997b10eba8629797bcb242c9"
+ },
+ {
+ "path": "client/public/models/parts/outfit/shoes_01.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "bbbb229b2693d18c4dc9a467a4724c4c00f7b223",
+ "size": 202524,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/bbbb229b2693d18c4dc9a467a4724c4c00f7b223"
+ },
+ {
+ "path": "client/public/models/parts/outfit/shoes_02.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "03120e4aed0df291aed5afde47466b5b86d1c879",
+ "size": 653480,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/03120e4aed0df291aed5afde47466b5b86d1c879"
+ },
+ {
+ "path": "client/public/models/parts/outfit/shoes_03.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "897c61a9bb7b4719e87c1699803c5c2ce8772b49",
+ "size": 202524,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/897c61a9bb7b4719e87c1699803c5c2ce8772b49"
+ },
+ {
+ "path": "client/public/models/parts/outfit/top_00.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "5a57800700133f61c5d02ea7974367416b6d63d1",
+ "size": 309980,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/5a57800700133f61c5d02ea7974367416b6d63d1"
+ },
+ {
+ "path": "client/public/models/parts/outfit/top_01.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "ce840961c6ea768126da3cb196c01834238ecbae",
+ "size": 205052,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/ce840961c6ea768126da3cb196c01834238ecbae"
+ },
+ {
+ "path": "client/public/models/parts/outfit/top_01_ai.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "2a6332f1e7a270dbf53d61eb20f2daa5c25f9724",
+ "size": 1535448,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/2a6332f1e7a270dbf53d61eb20f2daa5c25f9724"
+ },
+ {
+ "path": "client/public/models/parts/outfit/top_02.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "e2f78455409ec08e8d1212b3241f8f722e940ff3",
+ "size": 235140,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/e2f78455409ec08e8d1212b3241f8f722e940ff3"
+ },
+ {
+ "path": "client/public/models/parts/outfit/top_02_ai.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "dffa18060e6d5e180b93e339decc7112fd851c65",
+ "size": 1522108,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/dffa18060e6d5e180b93e339decc7112fd851c65"
+ },
+ {
+ "path": "client/public/models/parts/outfit/top_03.glb",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "bb65745c929bbac51e8083e7e3e1f38d63949b50",
+ "size": 116464,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/bb65745c929bbac51e8083e7e3e1f38d63949b50"
+ },
+ {
+ "path": "client/public/models/parts/refs",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "be50a715bb06820d339ddaee21c4b721241bf889",
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/trees/be50a715bb06820d339ddaee21c4b721241bf889"
+ },
+ {
+ "path": "client/public/models/parts/refs/README.md",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "e41bd7e8ac4524805787958ad733e12184ebdff7",
+ "size": 696,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/e41bd7e8ac4524805787958ad733e12184ebdff7"
+ },
+ {
+ "path": "client/public/models/parts/refs/accessories",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "247c3825b171ce7b4ed76913678e73c2162c4423",
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/trees/247c3825b171ce7b4ed76913678e73c2162c4423"
+ },
+ {
+ "path": "client/public/models/parts/refs/accessories/accessories_glasses_00_round.png",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "adeec1b862a84a27d4a7cabd175b420616d5afe8",
+ "size": 807284,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/adeec1b862a84a27d4a7cabd175b420616d5afe8"
+ },
+ {
+ "path": "client/public/models/parts/refs/accessories/accessories_hat_00_bow.png",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "c7ac7fddd8770421fb9ee18e4fe6f713e5d26ebd",
+ "size": 903415,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/c7ac7fddd8770421fb9ee18e4fe6f713e5d26ebd"
+ },
+ {
+ "path": "client/public/models/parts/refs/accessories/accessories_hat_02_catears.png",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "eecf202be91a97b1bce3f60f5061d59462bc7c91",
+ "size": 840004,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/eecf202be91a97b1bce3f60f5061d59462bc7c91"
+ },
+ {
+ "path": "client/public/models/parts/refs/body",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "397190a24c52556ff46a7345fe3934aa2c779a0a",
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/trees/397190a24c52556ff46a7345fe3934aa2c779a0a"
+ },
+ {
+ "path": "client/public/models/parts/refs/body/body_base_front.png",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "11f25c7548bbed50d6764c5a58e4bafe989493bb",
+ "size": 869826,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/11f25c7548bbed50d6764c5a58e4bafe989493bb"
+ },
+ {
+ "path": "client/public/models/parts/refs/body/character_full_front_00.png",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "66da6673b6a55dc4e61ef4a0f5a576847c333367",
+ "size": 1349845,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/66da6673b6a55dc4e61ef4a0f5a576847c333367"
+ },
+ {
+ "path": "client/public/models/parts/refs/body/character_full_front_01_hoodie.png",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "0020587aa37e08a11dfd5f185ab3e488e9d4bfad",
+ "size": 1591440,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/0020587aa37e08a11dfd5f185ab3e488e9d4bfad"
+ },
+ {
+ "path": "client/public/models/parts/refs/body/character_full_front_02_casual.png",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "6d21d9395672acfa2449dc6c151a014385de9390",
+ "size": 1228566,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/6d21d9395672acfa2449dc6c151a014385de9390"
+ },
+ {
+ "path": "client/public/models/parts/refs/body/character_full_side_00.png",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "15429d79a81a523be1339ed22fc9beb11bf4d8dd",
+ "size": 1147586,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/15429d79a81a523be1339ed22fc9beb11bf4d8dd"
+ },
+ {
+ "path": "client/public/models/parts/refs/hair",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "add807b9a2bbba29812aa8ba0a0bb6c999a425b0",
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/trees/add807b9a2bbba29812aa8ba0a0bb6c999a425b0"
+ },
+ {
+ "path": "client/public/models/parts/refs/hair/hair_back_00_bob.png",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "a23c1fb08e967ec956cb12611d7c2524833d6fab",
+ "size": 890214,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/a23c1fb08e967ec956cb12611d7c2524833d6fab"
+ },
+ {
+ "path": "client/public/models/parts/refs/hair/hair_back_01_short.png",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "59f0e01e514f3e908025336b1358a2101daee2e3",
+ "size": 941516,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/59f0e01e514f3e908025336b1358a2101daee2e3"
+ },
+ {
+ "path": "client/public/models/parts/refs/hair/hair_back_02_long.png",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "21b272d3548bc85cc479dabb45bdfa706d1bf86e",
+ "size": 1024343,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/21b272d3548bc85cc479dabb45bdfa706d1bf86e"
+ },
+ {
+ "path": "client/public/models/parts/refs/hair/hair_front_00_bangs.png",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "f3ba3745e0d6c3f51abb3ed25edd03443afacb8f",
+ "size": 936446,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/f3ba3745e0d6c3f51abb3ed25edd03443afacb8f"
+ },
+ {
+ "path": "client/public/models/parts/refs/hair/hair_front_00_bangs_side.png",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "aa836190ffdfe410a817eadb053bf0d1157cf328",
+ "size": 841620,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/aa836190ffdfe410a817eadb053bf0d1157cf328"
+ },
+ {
+ "path": "client/public/models/parts/refs/hair/hair_front_01_softbob.png",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "0eb038522e320ffab3bdfee976ca0cb1a16615b3",
+ "size": 879569,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/0eb038522e320ffab3bdfee976ca0cb1a16615b3"
+ },
+ {
+ "path": "client/public/models/parts/refs/hair/hair_front_02_twins.png",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "b8858476c1839999e823639d207e4932fb2d75d2",
+ "size": 923161,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/b8858476c1839999e823639d207e4932fb2d75d2"
+ },
+ {
+ "path": "client/public/models/parts/refs/hair/hair_front_03_sweep.png",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "379093b6077dd98882ee5a4ecb03d13ffe9454f0",
+ "size": 952901,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/379093b6077dd98882ee5a4ecb03d13ffe9454f0"
+ },
+ {
+ "path": "client/public/models/parts/refs/outfit",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "3e3eabe512adc82e2d45f9f02acc34c5ece4bbdf",
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/trees/3e3eabe512adc82e2d45f9f02acc34c5ece4bbdf"
+ },
+ {
+ "path": "client/public/models/parts/refs/outfit/outfit_bottom_00_skirt.png",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "5484c8f4e6b5868e9755cae0a27d992720e844e4",
+ "size": 925190,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/5484c8f4e6b5868e9755cae0a27d992720e844e4"
+ },
+ {
+ "path": "client/public/models/parts/refs/outfit/outfit_bottom_00_skirt_side.png",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "bceb3d7d268c3266aebfda793f80d9e3a8209bf6",
+ "size": 834142,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/bceb3d7d268c3266aebfda793f80d9e3a8209bf6"
+ },
+ {
+ "path": "client/public/models/parts/refs/outfit/outfit_bottom_01_flare.png",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "7990a9a5346bacc1f3f5fd41d2b1cbebd8c424a9",
+ "size": 1025480,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/7990a9a5346bacc1f3f5fd41d2b1cbebd8c424a9"
+ },
+ {
+ "path": "client/public/models/parts/refs/outfit/outfit_bottom_02_shorts.png",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "ef756622f8a21907ec4fe33b59a77d4800ae6208",
+ "size": 1298657,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/ef756622f8a21907ec4fe33b59a77d4800ae6208"
+ },
+ {
+ "path": "client/public/models/parts/refs/outfit/outfit_bottom_03_pants.png",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "20a1ee342c5855319fdb4179acbb92f6ae05d859",
+ "size": 845395,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/20a1ee342c5855319fdb4179acbb92f6ae05d859"
+ },
+ {
+ "path": "client/public/models/parts/refs/outfit/outfit_shoes_00_black.png",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "5bdeed60251e46c60931c0f210aa834558de9718",
+ "size": 910455,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/5bdeed60251e46c60931c0f210aa834558de9718"
+ },
+ {
+ "path": "client/public/models/parts/refs/outfit/outfit_shoes_01_pink.png",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "91350d3af78b3de2e2d004055c179a2b25320397",
+ "size": 977195,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/91350d3af78b3de2e2d004055c179a2b25320397"
+ },
+ {
+ "path": "client/public/models/parts/refs/outfit/outfit_shoes_02_boots.png",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "455f8063f656b941274f3973117c9cfa70b8c313",
+ "size": 1045877,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/455f8063f656b941274f3973117c9cfa70b8c313"
+ },
+ {
+ "path": "client/public/models/parts/refs/outfit/outfit_top_00_tee.png",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "b3735e8fc440212087b065cf941962171eccb9f9",
+ "size": 885200,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/b3735e8fc440212087b065cf941962171eccb9f9"
+ },
+ {
+ "path": "client/public/models/parts/refs/outfit/outfit_top_01_hoodie.png",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "a69cfa43d79465688444fe6d2167fbd2680b6a28",
+ "size": 937850,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/a69cfa43d79465688444fe6d2167fbd2680b6a28"
+ },
+ {
+ "path": "client/public/models/parts/refs/outfit/outfit_top_02_sailor.png",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "6c7cd08e17c2c95ed56611c702c10c2f998fb226",
+ "size": 958443,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/6c7cd08e17c2c95ed56611c702c10c2f998fb226"
+ },
+ {
+ "path": "client/public/models/parts/refs/outfit/outfit_top_02_sailor_side.png",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "422e5fd65143285529475b7fbe9a6a4c0001e082",
+ "size": 875750,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/422e5fd65143285529475b7fbe9a6a4c0001e082"
+ },
+ {
+ "path": "client/src",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "bbaed62b01fa6d1983d00e825ec25564b00c4d0c",
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/trees/bbaed62b01fa6d1983d00e825ec25564b00c4d0c"
+ },
+ {
+ "path": "client/src/App.tsx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "7e42a4b7f4d468da43f8d68f1c033a3a1774fd20",
+ "size": 1179,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/7e42a4b7f4d468da43f8d68f1c033a3a1774fd20"
+ },
+ {
+ "path": "client/src/api.ts",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "5a877c9ccf2609f104671300cbe697540ce77069",
+ "size": 3316,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/5a877c9ccf2609f104671300cbe697540ce77069"
+ },
+ {
+ "path": "client/src/character",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "9b48f017dc2ec209adfb9a87e229d2a9628bd8a7",
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/trees/9b48f017dc2ec209adfb9a87e229d2a9628bd8a7"
+ },
+ {
+ "path": "client/src/character/svg",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "6e2715788299d5f5a02982284cef8a57be98e845",
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/trees/6e2715788299d5f5a02982284cef8a57be98e845"
+ },
+ {
+ "path": "client/src/character/svg/SvgCharacter.tsx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "c021ec2c3d63e23cbc4940f3c226e5be4e1d2b6d",
+ "size": 2950,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/c021ec2c3d63e23cbc4940f3c226e5be4e1d2b6d"
+ },
+ {
+ "path": "client/src/character/svg/SvgStage.tsx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "9101b232d8ec99202e8731a5a577640492ee96ab",
+ "size": 2005,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/9101b232d8ec99202e8731a5a577640492ee96ab"
+ },
+ {
+ "path": "client/src/character/svg/backgrounds.ts",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "e2de3c7a9aefb791a7e92cfd391daca6c72ece40",
+ "size": 733,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/e2de3c7a9aefb791a7e92cfd391daca6c72ece40"
+ },
+ {
+ "path": "client/src/character/svg/capture.ts",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "f4975f5b0aad16b45a44a1afd94f11a52ae5c762",
+ "size": 2442,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/f4975f5b0aad16b45a44a1afd94f11a52ae5c762"
+ },
+ {
+ "path": "client/src/character/svg/palette.ts",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "896f4e4664cf558c07f486fa4e41a60f0814fd3d",
+ "size": 2271,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/896f4e4664cf558c07f486fa4e41a60f0814fd3d"
+ },
+ {
+ "path": "client/src/character/svg/partCatalog.ts",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "2825010aa44d039f52e8c0da229dd37c7d58160b",
+ "size": 411,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/2825010aa44d039f52e8c0da229dd37c7d58160b"
+ },
+ {
+ "path": "client/src/character/svg/particles.tsx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "e542c283dbc3d6fcc8017a4b60d45bae9ae7d227",
+ "size": 1028,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/e542c283dbc3d6fcc8017a4b60d45bae9ae7d227"
+ },
+ {
+ "path": "client/src/character/svg/parts",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "c935d6a8fac67d05dad41d4a29c961616fe4a21f",
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/trees/c935d6a8fac67d05dad41d4a29c961616fe4a21f"
+ },
+ {
+ "path": "client/src/character/svg/parts/accessories.tsx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "873412acf16c1f3f7522af592bd0d8cce2a86451",
+ "size": 5414,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/873412acf16c1f3f7522af592bd0d8cce2a86451"
+ },
+ {
+ "path": "client/src/character/svg/parts/body.tsx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "943ad5ad165df562d772986b7bb2a8002dbe6b2f",
+ "size": 3718,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/943ad5ad165df562d772986b7bb2a8002dbe6b2f"
+ },
+ {
+ "path": "client/src/character/svg/parts/face.tsx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "7ac6663acb6e4dc485fcb8622aa5598cb6d6eef6",
+ "size": 8038,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/7ac6663acb6e4dc485fcb8622aa5598cb6d6eef6"
+ },
+ {
+ "path": "client/src/character/svg/parts/hair.tsx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "d5ed1d753e0d03466cc3a28bd89709995243615d",
+ "size": 11275,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/d5ed1d753e0d03466cc3a28bd89709995243615d"
+ },
+ {
+ "path": "client/src/character/svg/parts/outfit.tsx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "9e3ecebd6046010636ff4ed2cf05af355076e41f",
+ "size": 12725,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/9e3ecebd6046010636ff4ed2cf05af355076e41f"
+ },
+ {
+ "path": "client/src/character/svg/poses.ts",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "61e439022c593bfed9bb6c74ab4de4b268ec4204",
+ "size": 2543,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/61e439022c593bfed9bb6c74ab4de4b268ec4204"
+ },
+ {
+ "path": "client/src/components",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "c0b4b78bd947770653bce16d0f4c31321b30b798",
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/trees/c0b4b78bd947770653bce16d0f4c31321b30b798"
+ },
+ {
+ "path": "client/src/components/ColorField.tsx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "841cb5ee9c3ab33c541edd4739114e81445a16f1",
+ "size": 986,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/841cb5ee9c3ab33c541edd4739114e81445a16f1"
+ },
+ {
+ "path": "client/src/components/CreatorPanel.tsx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "05716a5cfdb0bb4d4354030410e775d5d9036fad",
+ "size": 12686,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/05716a5cfdb0bb4d4354030410e775d5d9036fad"
+ },
+ {
+ "path": "client/src/components/Layout.tsx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "433ed0e6b0a3b07387215d8ce2bc13ca1673fe7f",
+ "size": 1252,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/433ed0e6b0a3b07387215d8ce2bc13ca1673fe7f"
+ },
+ {
+ "path": "client/src/components/StylePicker.tsx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "2d34b77082cd51c1bffc6707256814dcbddcfd21",
+ "size": 854,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/2d34b77082cd51c1bffc6707256814dcbddcfd21"
+ },
+ {
+ "path": "client/src/main.tsx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "b54087d3fc0efbf5261452c88197cbb6f305c610",
+ "size": 451,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/b54087d3fc0efbf5261452c88197cbb6f305c610"
+ },
+ {
+ "path": "client/src/pages",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "c56010422ccada661b68e777d9c97117820419f0",
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/trees/c56010422ccada661b68e777d9c97117820419f0"
+ },
+ {
+ "path": "client/src/pages/Create.tsx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "ad08876e3a303f27a0acd7fca44401ea6d919ee2",
+ "size": 4357,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/ad08876e3a303f27a0acd7fca44401ea6d919ee2"
+ },
+ {
+ "path": "client/src/pages/Gallery.tsx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "623af87ee128f521e73f6bc94ce51f127eea97a9",
+ "size": 4483,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/623af87ee128f521e73f6bc94ce51f127eea97a9"
+ },
+ {
+ "path": "client/src/pages/Landing.tsx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "14d69e4ac25a55b884697ed4e0f7625830322fe1",
+ "size": 1539,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/14d69e4ac25a55b884697ed4e0f7625830322fe1"
+ },
+ {
+ "path": "client/src/pages/Login.tsx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "0ce9d8e6059e59dd0a94aea049fa17a466374da2",
+ "size": 2499,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/0ce9d8e6059e59dd0a94aea049fa17a466374da2"
+ },
+ {
+ "path": "client/src/pages/Studio.tsx",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "3ea5a5b67edf000aa39da9922e5caa8cc7627bf3",
+ "size": 8606,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/3ea5a5b67edf000aa39da9922e5caa8cc7627bf3"
+ },
+ {
+ "path": "client/src/store.ts",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "a23313e735e52e0705230902b47d08a11b52551e",
+ "size": 4066,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/a23313e735e52e0705230902b47d08a11b52551e"
+ },
+ {
+ "path": "client/src/styles.css",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "1c949c777fc5c1e2268b4d748ef863e4fc063b7e",
+ "size": 10167,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/1c949c777fc5c1e2268b4d748ef863e4fc063b7e"
+ },
+ {
+ "path": "client/src/vite-env.d.ts",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "11f02fe2a0061d6e6e1f271b21da95423b448b32",
+ "size": 38,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/11f02fe2a0061d6e6e1f271b21da95423b448b32"
+ },
+ {
+ "path": "client/tsconfig.json",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "e55ca39261b36055c5112aaa94ec9972e65c02ad",
+ "size": 585,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/e55ca39261b36055c5112aaa94ec9972e65c02ad"
+ },
+ {
+ "path": "client/tsconfig.tsbuildinfo",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "7cf7cd696c1474e3964de5ec68dd8ccd464a1b0a",
+ "size": 851,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/7cf7cd696c1474e3964de5ec68dd8ccd464a1b0a"
+ },
+ {
+ "path": "client/vite.config.ts",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "32946f4a6314f1ebdaf0a9a9662e15af1efcf09b",
+ "size": 1048,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/32946f4a6314f1ebdaf0a9a9662e15af1efcf09b"
+ },
+ {
+ "path": "deploy",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "943bd27453d3399ffb7553fec7c8e4818ed1ca30",
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/trees/943bd27453d3399ffb7553fec7c8e4818ed1ca30"
+ },
+ {
+ "path": "deploy/CLOUDFLARE.md",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "7081459181584811394f732b73a9578520a62464",
+ "size": 1714,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/7081459181584811394f732b73a9578520a62464"
+ },
+ {
+ "path": "deploy/entangleit-worker.js",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "3bd4910bf549dda371e0bd64fe7b11bd6bf18d69",
+ "size": 4765,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/3bd4910bf549dda371e0bd64fe7b11bd6bf18d69"
+ },
+ {
+ "path": "package-lock.json",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "bf3c9d70f118bbd9792677e3eb226e3267f79c5a",
+ "size": 127291,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/bf3c9d70f118bbd9792677e3eb226e3267f79c5a"
+ },
+ {
+ "path": "package.json",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "463369fbb234ba7aeb2392da39bf3ef0b94bfcd3",
+ "size": 877,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/463369fbb234ba7aeb2392da39bf3ef0b94bfcd3"
+ },
+ {
+ "path": "scripts",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "1e63f7cc94373eff01033117729962a4febe6934",
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/trees/1e63f7cc94373eff01033117729962a4febe6934"
+ },
+ {
+ "path": "scripts/blender_build_chibi_kit.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "1a8526a0d03b9623e03b22f990e4337aa5d73b45",
+ "size": 22578,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/1a8526a0d03b9623e03b22f990e4337aa5d73b45"
+ },
+ {
+ "path": "scripts/blender_build_modular_kit.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "7b497d28ce2b674d40b45092e537f1eb4d8621f2",
+ "size": 18882,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/7b497d28ce2b674d40b45092e537f1eb4d8621f2"
+ },
+ {
+ "path": "scripts/blender_export_hyper3d_parts.py",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "5d5f43c3d40710642b796a8c3b2d4a0d3d644295",
+ "size": 4368,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/5d5f43c3d40710642b796a8c3b2d4a0d3d644295"
+ },
+ {
+ "path": "scripts/prepare-entangleit-deploy.sh",
+ "mode": "100755",
+ "type": "blob",
+ "sha": "65ce109131519fbe6b8d91f6c0e5dc4c813bc7e0",
+ "size": 1874,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/65ce109131519fbe6b8d91f6c0e5dc4c813bc7e0"
+ },
+ {
+ "path": "shared",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "fc267a99d81a1c980d766f6253e8cff28c66de79",
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/trees/fc267a99d81a1c980d766f6253e8cff28c66de79"
+ },
+ {
+ "path": "shared/package.json",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "925552dd5c2d8f415d1ba365f41040d36e3d040d",
+ "size": 381,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/925552dd5c2d8f415d1ba365f41040d36e3d040d"
+ },
+ {
+ "path": "shared/src",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "7cccec1c396830845f5ac0d0993bfdc9712d8a30",
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/trees/7cccec1c396830845f5ac0d0993bfdc9712d8a30"
+ },
+ {
+ "path": "shared/src/animation.ts",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "efae64bb80e43277d18db1e849e3e5a764be1462",
+ "size": 1847,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/efae64bb80e43277d18db1e849e3e5a764be1462"
+ },
+ {
+ "path": "shared/src/character.ts",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "31fa7513303b0222659eb6f7db13179bc736c706",
+ "size": 9230,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/31fa7513303b0222659eb6f7db13179bc736c706"
+ },
+ {
+ "path": "shared/src/index.ts",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "0cd74f721e3bfbb1082de9d65f1da8794e21a943",
+ "size": 64,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/0cd74f721e3bfbb1082de9d65f1da8794e21a943"
+ },
+ {
+ "path": "shared/tsconfig.json",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "1131b5a507ec0a23fa6fc7d078c9e4e58c15000a",
+ "size": 307,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/1131b5a507ec0a23fa6fc7d078c9e4e58c15000a"
+ },
+ {
+ "path": "worker",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "4fc7000fc8a7e86b7afcee5678185a71c21d1ab5",
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/trees/4fc7000fc8a7e86b7afcee5678185a71c21d1ab5"
+ },
+ {
+ "path": "worker/migrations",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "8af64e10d98576cf58854d697e242540f40ecea2",
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/trees/8af64e10d98576cf58854d697e242540f40ecea2"
+ },
+ {
+ "path": "worker/migrations/0001_init.sql",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "c29245d7b998fdda03c5fd5ce8426d20b1e0516d",
+ "size": 874,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/c29245d7b998fdda03c5fd5ce8426d20b1e0516d"
+ },
+ {
+ "path": "worker/package.json",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "caf2bd302bd36829f0029334e3aaddf12d528241",
+ "size": 623,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/caf2bd302bd36829f0029334e3aaddf12d528241"
+ },
+ {
+ "path": "worker/src",
+ "mode": "040000",
+ "type": "tree",
+ "sha": "444609a1f8d5d793ae283e144e6c1ab51c491234",
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/trees/444609a1f8d5d793ae283e144e6c1ab51c491234"
+ },
+ {
+ "path": "worker/src/auth.ts",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "4c9f4ae4dcbc4eb8550ea63aa689871ae9d0a502",
+ "size": 3065,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/4c9f4ae4dcbc4eb8550ea63aa689871ae9d0a502"
+ },
+ {
+ "path": "worker/src/cors.ts",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "0e1b2af4f095704158d33bc2141f214a2f2fb664",
+ "size": 873,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/0e1b2af4f095704158d33bc2141f214a2f2fb664"
+ },
+ {
+ "path": "worker/src/db.ts",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "649f32a45d529a3dddb0d4a1e52f7dfeee724ab0",
+ "size": 1299,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/649f32a45d529a3dddb0d4a1e52f7dfeee724ab0"
+ },
+ {
+ "path": "worker/src/env.ts",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "ed8e3a0ef470fee191c83710e57fb9b2e8ba8184",
+ "size": 96,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/ed8e3a0ef470fee191c83710e57fb9b2e8ba8184"
+ },
+ {
+ "path": "worker/src/index.ts",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "8281105bcd953599c7d97a03689007431412b6ea",
+ "size": 9127,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/8281105bcd953599c7d97a03689007431412b6ea"
+ },
+ {
+ "path": "worker/tsconfig.json",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "5c3d94eef531928d2ea8baaf32310d5aeac3c75d",
+ "size": 371,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/5c3d94eef531928d2ea8baaf32310d5aeac3c75d"
+ },
+ {
+ "path": "worker/wrangler.toml",
+ "mode": "100644",
+ "type": "blob",
+ "sha": "042b8876f6bc8c41902615f6664711c6a0fbf8ad",
+ "size": 317,
+ "url": "https://api.github.com/repos/auxon/GatchaGo/git/blobs/042b8876f6bc8c41902615f6664711c6a0fbf8ad"
+ }
+ ],
+ "truncated": false
+}

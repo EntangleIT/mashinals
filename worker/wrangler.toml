@@ -1,0 +1,12 @@
+name = "mashinals-api"
+main = "src/index.ts"
+compatibility_date = "2025-03-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "mashinals-db"
+database_id = "local-mashinals-db"
+migrations_dir = "migrations"
+
+[vars]
+CORS_ORIGIN = "*"
