@@ -3,17 +3,10 @@ import { Link } from 'react-router-dom';
 import type { MashinalRecord } from '@mashinals/shared';
 import { useMashStore } from '../store';
 import { useYoursWallet } from '../lib/wallet-store';
-import { demoInscribe, inscribeMashinal } from '../lib/inscription';
-import { reportInscription } from '../lib/api';
+import { demoInscribe, initializeMashinalsCollection, inscribeMashinal } from '../lib/inscription';
+import { fetchOrdinalsConfig, reportInscription, type OrdinalsConfig } from '../lib/api';
 import { PixelSprite } from '../pixel/PixelSprite';
-import {
-  YOURS_SITE,
-  getMintToAddress,
-  isLikelyBsvAddress,
-  onesatOriginUrl,
-  setMintToAddress,
-  whatsonchainUrl,
-} from '../lib/yours';
+import { YOURS_SITE, onesatOriginUrl, whatsonchainUrl } from '../lib/yours';
 
 interface Props {
   record: MashinalRecord;
@@ -25,40 +18,28 @@ export function InscribePanel({ record }: Props) {
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
-  const [mintTo, setMintTo] = useState(() => getMintToAddress());
-
-  useEffect(() => {
-    setMintTo(getMintToAddress());
-  }, [session?.addresses.ordAddress]);
+  const [config, setConfig] = useState<OrdinalsConfig | null>(null);
 
   const alreadyOnChain = Boolean(record.origin);
   const hasDemo = Boolean(record.demoOrigin) && !alreadyOnChain;
   const connected = status === 'connected' && Boolean(session);
 
-  function saveMintTo(next: string) {
-    const trimmed = next.trim();
-    setMintTo(trimmed);
-    if (trimmed && !isLikelyBsvAddress(trimmed)) {
-      setErr('Mint-to must be a mainnet BSV address starting with 1.');
-      return;
-    }
-    setMintToAddress(trimmed);
-    setErr(null);
-    setMsg(
-      trimmed
-        ? `Mint-to set to ${trimmed}. Note: address-locked mints often cannot be listed on 1sat.market from Yours.`
-        : 'Mint-to cleared — new mints go to the Yours ordinals basket (listable).',
-    );
-  }
+  useEffect(() => {
+    let cancelled = false;
+    void fetchOrdinalsConfig().then((c) => {
+      if (!cancelled) setConfig(c);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   async function onConnect() {
     setErr(null);
     setMsg(null);
     try {
       await connect();
-      setMsg(
-        'Connected. Set Mint to your Yours Ordinals receive address if it differs from the P1SAT deposit.',
-      );
+      setMsg('Connected. Inscribe mints a 1Sat collection item into your Yours ordinals basket.');
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'Connect failed');
     }
@@ -94,20 +75,31 @@ export function InscribePanel({ record }: Props) {
     }
   }
 
+  async function onInitCollection() {
+    setBusy(true);
+    setErr(null);
+    setMsg(null);
+    try {
+      if (!connected) await connect();
+      const { collectionId, txid } = await initializeMashinalsCollection(record);
+      const next = await fetchOrdinalsConfig();
+      setConfig(next);
+      setMsg(`Mashinals collection ready — ${collectionId} (tx ${txid.slice(0, 12)}…).`);
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : 'Collection deploy failed');
+      const next = await fetchOrdinalsConfig();
+      setConfig(next);
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function onInscribe() {
     setBusy(true);
     setErr(null);
     setMsg(null);
     try {
-      if (mintTo.trim()) {
-        if (!isLikelyBsvAddress(mintTo)) {
-          throw new Error('Mint-to must be a mainnet BSV address starting with 1.');
-        }
-        setMintToAddress(mintTo.trim());
-      }
-      if (!connected) {
-        await connect();
-      }
+      if (!connected) await connect();
       const result = await inscribeMashinal(record);
       markInscribed(record.id, {
         origin: result.origin,
@@ -121,6 +113,8 @@ export function InscribePanel({ record }: Props) {
         demo: false,
         svgHash: result.svgHash,
       });
+      const next = await fetchOrdinalsConfig();
+      setConfig(next);
       setMsg(result.message);
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'Inscribe failed');
@@ -161,10 +155,6 @@ export function InscribePanel({ record }: Props) {
               1Sat explorer
             </a>
           </p>
-          <p className="muted" style={{ margin: '0.35rem 0 0', fontSize: '0.8rem' }}>
-            Earlier mints may have locked to a one-off key or a P1SAT deposit — not your legacy Yours
-            Ordinals address. Set Mint to below, then mint a new character to land on that address.
-          </p>
         </div>
       )}
       {hasDemo && (
@@ -176,36 +166,12 @@ export function InscribePanel({ record }: Props) {
         </div>
       )}
 
-      {connected && (
-        <label style={{ display: 'grid', gap: '0.35rem', fontSize: '0.85rem' }}>
-          <span>
-            Mint to (Yours Ordinals receive){' '}
-            <span className="muted">— paste the address you use in Yours</span>
-          </span>
-          <input
-            type="text"
-            value={mintTo}
-            placeholder={session?.addresses.ordAddress ?? '1…'}
-            onChange={(e) => setMintTo(e.target.value)}
-            onBlur={() => saveMintTo(mintTo)}
-            spellCheck={false}
-            autoComplete="off"
-            style={{
-              fontFamily: 'ui-monospace, monospace',
-              fontSize: '0.8rem',
-              padding: '0.45rem 0.55rem',
-              borderRadius: '6px',
-              border: '1px solid var(--border, #333)',
-              background: 'var(--panel, #12081c)',
-              color: 'inherit',
-            }}
-          />
-          <span className="muted" style={{ fontSize: '0.75rem' }}>
-            Leave blank to mint into the Yours ordinals basket (required to list on 1sat.market).
-            Pasting a receive address (e.g. 1DHBH…) locks the 1-sat there for explorers, but Yours
-            usually cannot complete a market listing for those.
-          </span>
-        </label>
+      {config && (
+        <p className="muted" style={{ margin: 0, fontSize: '0.8rem' }}>
+          {config.ready && config.collectionId
+            ? `Collection ready · ${config.collectionId.slice(0, 18)}… · next #${config.nextMintNumber ?? '?'}`
+            : 'Collection not initialized yet — first Inscribe (or Initialize) deploys the parent via Yours.'}
+        </p>
       )}
 
       <div className="cta-row">
@@ -228,9 +194,20 @@ export function InscribePanel({ record }: Props) {
           className="btn"
           onClick={onInscribe}
           disabled={busy || alreadyOnChain || status === 'detecting'}
+          title="Mint as 1Sat Ordinal collection item into Yours"
         >
-          Inscribe 1Sat
+          {busy ? 'Inscribing…' : 'Inscribe 1Sat'}
         </button>
+        {!config?.ready && (
+          <button
+            type="button"
+            className="btn btn-ghost"
+            onClick={onInitCollection}
+            disabled={busy || status === 'detecting'}
+          >
+            Initialize collection
+          </button>
+        )}
         <button type="button" className="btn btn-demo" onClick={onDemo} disabled={busy || alreadyOnChain}>
           Demo Inscribe
         </button>
@@ -261,11 +238,8 @@ export function InscribePanel({ record }: Props) {
         <p style={{ margin: 0, color: 'var(--danger)' }}>{err ?? walletError}</p>
       )}
       <p className="muted" style={{ margin: 0, fontSize: '0.8rem' }}>
-        Live mint uses{' '}
-        <a href={YOURS_SITE} target="_blank" rel="noreferrer">
-          Yours Wallet
-        </a>{' '}
-        to inscribe a 32×32 PNG + MAP. No private keys leave your wallet.
+        Same path as live GatchaGo: Yours + <code>mintCollectionItem</code> into the ordinals basket
+        so Market sell/transfer works. No private keys leave your wallet.
       </p>
     </div>
   );

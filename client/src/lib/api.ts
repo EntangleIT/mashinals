@@ -70,3 +70,70 @@ export async function reportRecipe(payload: {
     body: JSON.stringify(payload),
   });
 }
+
+export type OrdinalsConfig = {
+  app: string;
+  ready: boolean;
+  collectionId: string | null;
+  quantity: number;
+  nextMintNumber?: number;
+  coverTxid?: string | null;
+};
+
+export async function fetchOrdinalsConfig(): Promise<OrdinalsConfig> {
+  const data = await req<OrdinalsConfig>('/ordinals/config');
+  return (
+    data ?? {
+      app: 'mashinals',
+      ready: false,
+      collectionId: null,
+      quantity: 1_000_000,
+    }
+  );
+}
+
+export async function registerCollection(input: {
+  collectionId: string;
+  quantity?: number;
+  coverTxid?: string;
+}): Promise<OrdinalsConfig & { ok?: boolean; error?: string }> {
+  const res = await fetch(`${API_BASE}/ordinals/collection`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(input),
+  });
+  const data = (await res.json().catch(() => ({}))) as OrdinalsConfig & {
+    ok?: boolean;
+    error?: string;
+  };
+  if (!res.ok) {
+    throw new Error(data.error || `Failed to register collection (${res.status})`);
+  }
+  return data;
+}
+
+export async function nextMintNumber(): Promise<{
+  mintNumber: number;
+  collectionId: string;
+  remaining: number;
+}> {
+  const res = await fetch(`${API_BASE}/ordinals/next-mint-number`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({}),
+  });
+  const data = (await res.json().catch(() => ({}))) as {
+    mintNumber?: number;
+    collectionId?: string;
+    remaining?: number;
+    error?: string;
+  };
+  if (!res.ok || data.mintNumber == null || !data.collectionId) {
+    throw new Error(data.error || `Could not reserve mint number (${res.status})`);
+  }
+  return {
+    mintNumber: data.mintNumber,
+    collectionId: data.collectionId,
+    remaining: data.remaining ?? 0,
+  };
+}

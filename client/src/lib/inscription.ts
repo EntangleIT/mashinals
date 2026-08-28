@@ -1,6 +1,17 @@
 import type { InscriptionMeta, MashinalRecord } from '@mashinals/shared';
+import type { CollectionItemTrait } from '@1sat/types';
 import { capturePngBase64, hashPixels } from '../pixel/render';
-import { getActiveContext, inscribeWithYours, metaToMap, wrapWalletError } from './yours';
+import {
+  fetchOrdinalsConfig,
+  nextMintNumber,
+  registerCollection,
+} from './api';
+import {
+  getActiveContext,
+  mintCollectionItemWithYours,
+  mintCollectionWithYours,
+  wrapWalletError,
+} from './yours';
 
 export interface InscribeResult {
   demo: boolean;
@@ -8,7 +19,8 @@ export interface InscribeResult {
   origin: string;
   svgHash: string;
   message: string;
-  /** On-chain lock address (ordinal deposit) when live. */
+  mintNumber?: number;
+  collectionId?: string;
   destination?: string;
 }
 
@@ -29,6 +41,24 @@ function buildMeta(record: MashinalRecord): InscriptionMeta {
     ...(record.parentAOrigin ? { parentAOrigin: record.parentAOrigin } : {}),
     ...(record.parentBOrigin ? { parentBOrigin: record.parentBOrigin } : {}),
   };
+}
+
+function mashTraits(record: MashinalRecord): CollectionItemTrait[] {
+  const g = record.spec.genes;
+  const traits: CollectionItemTrait[] = [
+    { name: 'body', value: String(g.body) },
+    { name: 'hair', value: String(g.hair) },
+    { name: 'eyes', value: String(g.eyes) },
+    { name: 'mouth', value: String(g.mouth) },
+    { name: 'clothes', value: String(g.clothes) },
+    { name: 'accessory', value: String(g.accessory) },
+    { name: 'palette', value: String(g.palette) },
+    { name: 'generation', value: String(record.generation) },
+  ];
+  if (record.parentAName) traits.push({ name: 'parentA', value: record.parentAName });
+  if (record.parentBName) traits.push({ name: 'parentB', value: record.parentBName });
+  if (record.caption) traits.push({ name: 'caption', value: record.caption.slice(0, 120) });
+  return traits;
 }
 
 /** Local preview ordinal — clearly not on-chain. */
@@ -57,8 +87,50 @@ export async function demoInscribe(record: MashinalRecord): Promise<InscribeResu
 }
 
 /**
- * Inscribe a Mashinal as a 1SatOrdinal via Yours Wallet (@1sat/actions).
- * Client builds PNG + MAP; wallet signs & broadcasts. No hot keys in the app.
+ * Deploy the Mashinals collection parent once (GatchaGo-style), then register it
+ * with the Worker so item mints can attach via collectionId.
+ */
+export async function initializeMashinalsCollection(coverRecord: MashinalRecord): Promise<{
+  txid: string;
+  collectionId: string;
+}> {
+  if (!getActiveContext()) {
+    throw new Error('Connect Yours Wallet before deploying the Mashinals collection.');
+  }
+  const existing = await fetchOrdinalsConfig();
+  if (existing.ready && existing.collectionId) {
+    return {
+      txid: existing.coverTxid ?? existing.collectionId.split('_')[0]!,
+      collectionId: existing.collectionId,
+    };
+  }
+
+  const dataB64 = capturePngBase64(coverRecord.spec);
+  const { txid, collectionId } = await mintCollectionWithYours({
+    base64Content: dataB64,
+    contentType: 'image/png',
+    name: 'Mashinals',
+    quantity: 1_000_000,
+  });
+  try {
+    await registerCollection({ collectionId, quantity: 1_000_000, coverTxid: txid });
+  } catch (err) {
+    // Another client may have won the race — use whatever the Worker has.
+    const again = await fetchOrdinalsConfig();
+    if (again.ready && again.collectionId) {
+      return {
+        txid: again.coverTxid ?? again.collectionId.split('_')[0]!,
+        collectionId: again.collectionId,
+      };
+    }
+    throw err;
+  }
+  return { txid, collectionId };
+}
+
+/**
+ * Inscribe a Mashinal as a 1Sat collection item via Yours — same path as live
+ * GatchaGo (`mintCollectionItem` into the ordinals basket).
  */
 export async function inscribeMashinal(record: MashinalRecord): Promise<InscribeResult> {
   if (!getActiveContext()) {
@@ -67,19 +139,41 @@ export async function inscribeMashinal(record: MashinalRecord): Promise<Inscribe
 
   const dataB64 = capturePngBase64(record.spec);
   const svgHash = await hashPixels(record.spec);
-  const meta = buildMeta(record);
 
   try {
-    const { txid, origin, destination } = await inscribeWithYours({
+    let config = await fetchOrdinalsConfig();
+    if (!config.ready || !config.collectionId) {
+      const deployed = await initializeMashinalsCollection(record);
+      config = {
+        app: 'mashinals',
+        ready: true,
+        collectionId: deployed.collectionId,
+        quantity: 1_000_000,
+      };
+    }
+
+    const { mintNumber, collectionId } = await nextMintNumber();
+    const { txid, origin } = await mintCollectionItemWithYours({
       base64Content: dataB64,
       contentType: 'image/png',
-      map: metaToMap(meta),
+      name: record.name,
+      collectionId,
+      mintNumber,
+      traits: mashTraits(record),
     });
 
     try {
       localStorage.setItem(
         `mashinals:inscribed:${record.id}`,
-        JSON.stringify({ txid, origin, destination, svgHash, meta, at: Date.now() }),
+        JSON.stringify({
+          txid,
+          origin,
+          collectionId,
+          mintNumber,
+          svgHash,
+          meta: buildMeta(record),
+          at: Date.now(),
+        }),
       );
     } catch {
       // ignore
@@ -89,12 +183,11 @@ export async function inscribeMashinal(record: MashinalRecord): Promise<Inscribe
       demo: false,
       txid,
       origin,
-      destination,
       svgHash,
-      message:
-        destination === 'yours-ordinals-basket'
-          ? `Broadcast into your Yours ordinals basket — origin ${origin}. You can list it from Yours for 1sat.market. Do not mint again.`
-          : `Broadcast to ${destination} — origin ${origin}. Address-locked mints may not be listable from Yours (missing basket metadata). Do not mint again.`,
+      mintNumber,
+      collectionId,
+      destination: 'yours-ordinals-basket',
+      message: `Inscribed #${mintNumber} into your Yours ordinals basket — origin ${origin}. List it from Market or Yours. Do not mint again.`,
     };
   } catch (err) {
     throw wrapWalletError(err, 'Inscribe');

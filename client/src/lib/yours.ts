@@ -8,6 +8,8 @@ import {
   createContext,
   deriveDepositAddresses,
   inscribe,
+  mintCollection,
+  mintCollectionItem,
   listOrdinals,
   sellOrdinal,
   buyOrdinal,
@@ -15,6 +17,7 @@ import {
   cancelOrdinalListing,
   type OneSatContext,
 } from '@1sat/actions';
+import type { CollectionItemTrait } from '@1sat/types';
 import { OneSatServices } from '@1sat/client';
 import { readAssetIdTag } from '@1sat/types';
 import type { WalletInterface, WalletOutput } from '@bsv/sdk';
@@ -27,7 +30,7 @@ export const WOC_TX = 'https://whatsonchain.com/tx';
 /** 1Sat ordinal explorer (indexes after broadcast; may lag while in mempool). */
 export const ONESAT_ORIGIN = 'https://ordinals.gorillapool.io/txo/origin';
 
-/** Local preference: lock new inscriptions to this P2PKH (Yours legacy ord receive). */
+/** Local preference helpers kept for older sessions; new mints ignore mint-to. */
 const MINT_TO_KEY = 'mashinals:mint-to-address';
 
 export function getMintToAddress(): string {
@@ -214,44 +217,99 @@ async function runWalletAction<T extends { txid?: string; error?: string }>(
 }
 
 /**
- * Address that new inscriptions lock to, or `null` for default self (ordinals basket).
- *
- * Prefer `null` (omit destination) so Yours stores customInstructions and can
- * list/sell on 1sat.market. A bare P2PKH mint-to address often shows on explorers
- * but fails `sellOrdinal` with missing-custom-instructions.
+ * Deploy the official Mashinals collection parent (once), same pattern as live
+ * GatchaGo: `@1sat/actions` `mintCollection` → Yours ordinals basket.
  */
-export async function resolveMintDestination(
-  override?: string,
-): Promise<string | null> {
-  const preferred = (override ?? getMintToAddress()).trim();
-  if (!preferred) return null;
-  if (!isLikelyBsvAddress(preferred)) {
-    throw new Error('Mint-to address must be a mainnet BSV address starting with 1.');
+export async function mintCollectionWithYours(input: {
+  base64Content: string;
+  contentType: string;
+  name?: string;
+  description?: string;
+  quantity?: number;
+}): Promise<{ txid: string; collectionId: string }> {
+  const ctx = requireContext();
+  try {
+    const result = await runWalletAction('Mint collection', 'Create inscription', () =>
+      mintCollection.execute(ctx, {
+        base64Content: input.base64Content,
+        contentType: input.contentType,
+        name: input.name ?? 'Mashinals',
+        description:
+          input.description ??
+          'Official Mashinals collection — Infinite Craft–style pixel creatures inscribed as 1Sat Ordinals.',
+        quantity: input.quantity ?? 1_000_000,
+        app: 'mashinals',
+      }),
+    );
+    if (result.error || !result.txid || !result.collectionId) {
+      throw wrapWalletError(
+        new Error(result.error ?? 'collection-mint-failed'),
+        'Mint collection',
+      );
+    }
+    return {
+      txid: result.txid.toLowerCase(),
+      collectionId: result.collectionId.replace('.', '_'),
+    };
+  } catch (err) {
+    if (err instanceof WalletTimeoutError) throw err;
+    throw wrapWalletError(err, 'Mint collection');
   }
-  return preferred;
 }
 
 /**
- * Inscribe a PNG (or other) payload via Yours / BRC-100 wallet.
- * Default: lock to self in the ordinals basket (listable on 1sat.market).
- * Optional mint-to address: locks to that P2PKH (explorer-visible) but Yours
- * may not be able to list it.
+ * Mint a Mashinal as a 1Sat collection item into the Yours ordinals basket.
+ * Matches live GatchaGo (`mintCollectionItem`) — tagged + customInstructions so
+ * sell/transfer work without a bare P2PKH mint-to address.
+ */
+export async function mintCollectionItemWithYours(input: {
+  base64Content: string;
+  contentType: string;
+  name: string;
+  collectionId: string;
+  mintNumber?: number;
+  traits?: CollectionItemTrait[];
+}): Promise<{ txid: string; origin: string }> {
+  const ctx = requireContext();
+  try {
+    const result = await runWalletAction('Mint collection item', 'Create inscription', () =>
+      mintCollectionItem.execute(ctx, {
+        base64Content: input.base64Content,
+        contentType: input.contentType,
+        name: input.name.slice(0, 64) || 'Mashinal',
+        collectionId: input.collectionId.replace('.', '_'),
+        mintNumber: input.mintNumber,
+        traits: input.traits,
+        app: 'mashinals',
+      }),
+    );
+    if (result.error || !result.txid) {
+      throw wrapWalletError(new Error(result.error ?? 'no-txid'), 'Mint collection item');
+    }
+    const txid = result.txid.toLowerCase();
+    return { txid, origin: `${txid}_0` };
+  } catch (err) {
+    if (err instanceof WalletTimeoutError) throw err;
+    throw wrapWalletError(err, 'Mint collection item');
+  }
+}
+
+/**
+ * Plain inscribe fallback (non-collection). Prefer mintCollectionItemWithYours.
+ * Always omits destination so the output lands in the Yours ordinals basket.
  */
 export async function inscribeWithYours(input: {
   base64Content: string;
   contentType: string;
   map: Record<string, string>;
-  destinationAddress?: string;
 }): Promise<{ txid: string; origin: string; destination: string }> {
   const ctx = requireContext();
-  const destination = await resolveMintDestination(input.destinationAddress);
   try {
     const result = await runWalletAction('Inscribe', INSCRIBE_DESCRIPTION, () =>
       inscribe.execute(ctx, {
         base64Content: input.base64Content,
         contentType: input.contentType,
         map: input.map,
-        ...(destination ? { destination: { address: destination } } : {}),
       }),
     );
 
@@ -263,7 +321,7 @@ export async function inscribeWithYours(input: {
     return {
       txid,
       origin: `${txid}_0`,
-      destination: destination ?? 'yours-ordinals-basket',
+      destination: 'yours-ordinals-basket',
     };
   } catch (err) {
     if (err instanceof WalletTimeoutError) throw err;

@@ -21,23 +21,24 @@ No GatchaGo SVG path kits, no Three.js meshes, no photoreal AI images.
 
 ## 1SatOrdinals flow
 
+Same pattern as **live GatchaGo** on entangleit.com (Yours Wallet + `@1sat/actions` collections — the public GitHub `GatchaGo` tree is behind the deployed SPA):
+
 1. Client composites the pixel sprite from genes.
-2. Client builds inscription: PNG bytes + MAP metadata (`app=mashinals`, name, caption, recipe, generation, genes, parent names / origin outpoints when known).
-3. User connects **Yours Wallet** (payment + ordinal addresses via BRC-100). **No hot private keys** are shipped or stored on the Worker.
-4. Wallet signs & broadcasts via `@1sat/actions` `inscribe.execute`.
-5. Client reports `{txid, origin, …}` to the Worker, which indexes the public feed.
+2. Once: deploy a **collection parent** (`mintCollection`, MAP `subType=collection`) and register `collectionId` on the Worker (`/api/ordinals/config`).
+3. Each Mashinal: `mintCollectionItem` with PNG + traits + `collectionId` / mint number — lands in the **Yours ordinals basket** with tracking tags / customInstructions (listable from Market / Yours).
+4. Client reports `{txid, origin, …}` to the Worker feed.
 
 **Demo Inscribe** writes a local “preview ordinal” labeled **NOT on-chain** so the UX is testable without a wallet.
 
 ### Yours Wallet (live mint)
 
-Live connect + inscribe uses the modern BRC-100 stack (same as SatPress):
-
 - `@1sat/react` `WalletProvider` / `useWallet` (auto-detects Yours)
-- `@1sat/actions` `createContext` + `inscribe.execute` with MAP metadata
-- `@1sat/client` `OneSatServices('main')`
+- `@1sat/actions` `mintCollection` / `mintCollectionItem` (preferred) — not bare address-locked `inscribe`
+- `@1sat/client` `OneSatServices('main')` for market browse
 
 Install [Yours Wallet](https://yours.org) (Chrome extension), unlock it, then **Connect Yours Wallet** on the board. Inscribe prompts the wallet — no hot keys in the app or Worker.
+
+First live mint (or **Initialize collection**) deploys the Mashinals collection parent if the Worker has none yet.
 
 ### Libraries
 

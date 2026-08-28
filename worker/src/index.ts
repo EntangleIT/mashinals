@@ -210,6 +210,112 @@ async function handleApi(
       return json(env, request, { recipe: row });
     }
 
+    // ── Ordinals collection (mirrors live GatchaGo /ordinals/*) ─────────────
+    if (path === '/ordinals/config' && request.method === 'GET') {
+      const row = await env.DB.prepare(
+        `SELECT collection_id, quantity, next_mint_number, cover_txid
+         FROM collection_config WHERE id = 1`,
+      ).first<{
+        collection_id: string;
+        quantity: number;
+        next_mint_number: number;
+        cover_txid: string | null;
+      }>();
+
+      if (!row?.collection_id) {
+        return json(env, request, {
+          app: 'mashinals',
+          ready: false,
+          collectionId: null,
+          quantity: 1_000_000,
+        });
+      }
+
+      return json(env, request, {
+        app: 'mashinals',
+        ready: true,
+        collectionId: row.collection_id,
+        quantity: row.quantity,
+        nextMintNumber: row.next_mint_number,
+        coverTxid: row.cover_txid,
+      });
+    }
+
+    if (path === '/ordinals/collection' && request.method === 'POST') {
+      const body = (await request.json()) as {
+        collectionId?: string;
+        quantity?: number;
+        coverTxid?: string;
+      };
+      const collectionId = body.collectionId?.trim();
+      if (!collectionId || !/^[a-fA-F0-9]{64}[_.]\d+$/.test(collectionId)) {
+        return json(env, request, { error: 'collectionId required as txid_vout' }, 400);
+      }
+      const normalized = collectionId.replace('.', '_');
+      const quantity = Math.max(1, Math.floor(body.quantity ?? 1_000_000));
+      const existing = await env.DB.prepare(
+        'SELECT collection_id FROM collection_config WHERE id = 1',
+      ).first<{ collection_id: string }>();
+      if (existing?.collection_id && existing.collection_id !== normalized) {
+        return json(
+          env,
+          request,
+          {
+            error: 'collection-already-set',
+            collectionId: existing.collection_id,
+          },
+          409,
+        );
+      }
+
+      await env.DB.prepare(
+        `INSERT INTO collection_config (id, collection_id, quantity, next_mint_number, cover_txid, updated_at)
+         VALUES (1, ?, ?, 1, ?, ?)
+         ON CONFLICT(id) DO UPDATE SET
+           collection_id = excluded.collection_id,
+           quantity = excluded.quantity,
+           cover_txid = COALESCE(excluded.cover_txid, collection_config.cover_txid),
+           updated_at = excluded.updated_at`,
+      )
+        .bind(normalized, quantity, body.coverTxid ?? null, Date.now())
+        .run();
+
+      return json(env, request, {
+        ok: true,
+        app: 'mashinals',
+        ready: true,
+        collectionId: normalized,
+        quantity,
+      });
+    }
+
+    if (path === '/ordinals/next-mint-number' && request.method === 'POST') {
+      const row = await env.DB.prepare(
+        'SELECT collection_id, quantity, next_mint_number FROM collection_config WHERE id = 1',
+      ).first<{
+        collection_id: string;
+        quantity: number;
+        next_mint_number: number;
+      }>();
+      if (!row?.collection_id) {
+        return json(env, request, { error: 'collection-not-ready' }, 409);
+      }
+      if (row.next_mint_number > row.quantity) {
+        return json(env, request, { error: 'collection-full' }, 409);
+      }
+      const mintNumber = row.next_mint_number;
+      await env.DB.prepare(
+        'UPDATE collection_config SET next_mint_number = next_mint_number + 1, updated_at = ? WHERE id = 1',
+      )
+        .bind(Date.now())
+        .run();
+      return json(env, request, {
+        mintNumber,
+        collectionId: row.collection_id,
+        remaining: Math.max(0, row.quantity - mintNumber),
+      });
+    }
+
     return json(env, request, { error: 'Not found' }, 404);
   } catch (err) {
     console.error(err);

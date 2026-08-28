@@ -3,7 +3,7 @@
  * Listings live on the global 1Sat orderbook (api.1sat.app); we filter to Mashinals.
  */
 
-import { fetchFeed } from './api';
+import { fetchFeed, fetchOrdinalsConfig } from './api';
 import {
   contentUrl,
   formatSats,
@@ -64,12 +64,29 @@ function asListing(row: ListingRow, fallbackOrigin?: string): MashListing | null
   };
 }
 
-function isMashinalRow(row: ListingRow, mashOrigins: Set<string>): boolean {
+function isMashinalRow(row: ListingRow, mashOrigins: Set<string>, collectionId: string | null): boolean {
   const app =
     row.data?.map?.app ??
     row.origin?.data?.map?.app ??
     null;
   if (app === 'mashinals') return true;
+  const map = row.data?.map ?? row.origin?.data?.map;
+  const sub = map as { subType?: string; subTypeData?: unknown } | undefined;
+  if (collectionId && sub?.subType === 'collectionItem') {
+    let data = sub.subTypeData;
+    if (typeof data === 'string') {
+      try {
+        data = JSON.parse(data);
+      } catch {
+        data = null;
+      }
+    }
+    const cid =
+      data && typeof data === 'object' && data !== null && 'collectionId' in data
+        ? String((data as { collectionId?: string }).collectionId ?? '')
+        : '';
+    if (cid.replace('.', '_') === collectionId.replace('.', '_')) return true;
+  }
   const origin = row.data?.ordlock?.origin ?? row.origin?.outpoint;
   if (!origin) return false;
   return mashOrigins.has(toUnderscoreOutpoint(origin));
@@ -78,7 +95,8 @@ function isMashinalRow(row: ListingRow, mashOrigins: Set<string>): boolean {
 /** Active Mashinal listings from the global orderbook. */
 export async function fetchMashinalListings(limit = 60): Promise<MashListing[]> {
   const services = getOneSatServices();
-  const feed = await fetchFeed(100);
+  const [feed, ordinals] = await Promise.all([fetchFeed(100), fetchOrdinalsConfig()]);
+  const collectionId = ordinals.collectionId;
   const live = feed.filter((i) => i.origin && !i.demo);
   const mashOrigins = new Set(live.map((i) => toUnderscoreOutpoint(i.origin!)));
   const nameByOrigin = new Map(live.map((i) => [toUnderscoreOutpoint(i.origin!), i.name]));
@@ -105,7 +123,7 @@ export async function fetchMashinalListings(limit = 60): Promise<MashListing[]> 
     }
   }
 
-  // Also scan recent image listings and keep Mashinals (by app or known origin).
+  // Also scan recent image listings and keep Mashinals (by app, collection, or known origin).
   let scanned: MashListing[] = [];
   try {
     const rows = (await services.market.searchListings({
@@ -115,7 +133,7 @@ export async function fetchMashinalListings(limit = 60): Promise<MashListing[]> 
       rev: true,
     })) as ListingRow[];
     scanned = rows
-      .filter((r) => isMashinalRow(r, mashOrigins))
+      .filter((r) => isMashinalRow(r, mashOrigins, collectionId))
       .map((r) => asListing(r))
       .filter((x): x is MashListing => Boolean(x));
   } catch (err) {
