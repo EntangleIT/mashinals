@@ -10,3 +10,4 @@ client/dist/
 shared/dist/
 coverage/
 agent-tools/
+*.tsbuildinfo
