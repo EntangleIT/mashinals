@@ -93,12 +93,14 @@ export function requireContext(): OneSatContext {
 }
 
 /**
- * Extension wallets are dApp-style. Match live GatchaGo: default isBaseWallet
- * (true) so createAction apply stamps basket outputs the way Yours expects.
+ * Extension wallets are dApp-style (isBaseWallet false). Same as SatPress /
+ * Yours ServiceProvider chromeCWI — required for connect + permission prompts.
  */
 export function buildContext(wallet: WalletInterface): OneSatContext {
-  return createContext(wallet, { chain: 'main', services });
+  return createContext(wallet, { chain: 'main', services, isBaseWallet: false });
 }
+
+const SESSION_DERIVE_TIMEOUT_MS = 15_000;
 
 /** Derive display addresses + spendable balance for the connected identity. */
 export async function buildSession(
@@ -106,16 +108,36 @@ export async function buildSession(
   providerType: string | null,
 ): Promise<YoursSession> {
   const ctx = requireContext();
-  const derivations = await deriveDepositAddresses.execute(ctx, { startIndex: 0, count: 2 });
-  const bsvAddress = derivations.derivations[0]?.address ?? '';
-  const ordAddress = derivations.derivations[1]?.address ?? bsvAddress;
+
+  let bsvAddress = '';
+  let ordAddress = '';
+
+  // Short timeout: a wedged Yours (post sweep/review errors) must not block Connect.
+  try {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const derivations = await Promise.race([
+      deriveDepositAddresses.execute(ctx, { startIndex: 0, count: 2 }),
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(() => reject(new Error('derive-timeout')), SESSION_DERIVE_TIMEOUT_MS);
+      }),
+    ]).finally(() => {
+      if (timer) clearTimeout(timer);
+    });
+    bsvAddress = derivations.derivations[0]?.address ?? '';
+    ordAddress = derivations.derivations[1]?.address ?? bsvAddress;
+  } catch (err) {
+    console.warn('[yours] deriveDepositAddresses failed during connect', err);
+  }
+
   if (!bsvAddress) {
-    throw new Error('Yours Wallet did not return a deposit address. Unlock the extension and try again.');
+    // Still connected — GatchaGo only needs useWallet status === connected.
+    bsvAddress = identityKey ? `id:${identityKey.slice(0, 10)}` : 'connected';
+    ordAddress = bsvAddress;
   }
 
   let balance: YoursBalance | null = null;
   try {
-    const outputs = await ctx.wallet.listOutputs({ basket: 'default', limit: 500 });
+    const outputs = await ctx.wallet.listOutputs({ basket: 'default', limit: 200 });
     const sats = outputs.outputs.reduce((sum, o) => sum + (o.spendable ? o.satoshis : 0), 0);
     balance = { satoshis: sats, bsv: sats / 1e8 };
   } catch {

@@ -86,12 +86,33 @@ export const useYoursWallet = create<WalletState>((set, get) => ({
       setActiveContext(buildContext(wallet));
       try {
         const session = await buildSession(identityKey ?? '', providerType);
-        set({ status: 'connected', session, error: null, hydrated: true });
-      } catch (err) {
         set({
-          status: 'available',
-          session: null,
-          error: err instanceof Error ? err.message : 'Could not read wallet addresses.',
+          status: 'connected',
+          session,
+          error: session.addresses.bsvAddress.startsWith('id:')
+            ? 'Connected. Address lookup timed out — minting may still work; reload Yours if not.'
+            : null,
+          hydrated: true,
+        });
+      } catch (err) {
+        // BRC-100 is connected — do not bounce to "available" (that looks like Connect failed).
+        console.warn('[yours] buildSession failed; keeping connected', err);
+        set({
+          status: 'connected',
+          session: {
+            provider: providerType ?? 'yours-wallet',
+            addresses: {
+              bsvAddress: identityKey ? `id:${identityKey.slice(0, 10)}` : 'connected',
+              ordAddress: identityKey ? `id:${identityKey.slice(0, 10)}` : 'connected',
+              identityAddress: identityKey || undefined,
+            },
+            balance: null,
+            identity: identityKey || undefined,
+          },
+          error:
+            err instanceof Error
+              ? `Connected, but wallet metadata failed: ${err.message}`
+              : 'Connected, but wallet metadata failed.',
           hydrated: true,
         });
       }
@@ -114,22 +135,20 @@ export const useYoursWallet = create<WalletState>((set, get) => ({
     set({ status: 'connecting', error: null });
     try {
       await connector();
-      for (let i = 0; i < 80 && get().status !== 'connected'; i++) {
+      for (let i = 0; i < 100 && get().status !== 'connected'; i++) {
         await new Promise((r) => setTimeout(r, 100));
-        // Fail fast once the BRC-100 race finishes without a wallet
-        if (get().status === 'available' && get().error) break;
+        if (get().status === 'available' && get().error && i > 5) break;
       }
       const session = get().session;
-      if (get().status !== 'connected' || !session) {
-        throw new Error(
-          get().error ??
-            'Could not reach Yours Wallet. Unlock the extension on this tab, then try Connect again.',
-        );
-      }
-      return session;
+      if (get().status === 'connected' && session) return session;
+      throw new Error(
+        get().error ??
+          'Could not reach Yours Wallet. Unlock the extension on this tab, reload the extension, then try Connect again.',
+      );
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Could not connect Yours Wallet.';
-      // Stay available so the user can retry Connect — never bounce to Install.
+      // If sync already marked connected, prefer that over a racing error.
+      if (get().status === 'connected' && get().session) return get().session!;
       set({
         status: 'available',
         error: message,

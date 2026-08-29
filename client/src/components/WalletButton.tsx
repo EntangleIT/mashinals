@@ -27,15 +27,18 @@ export function WalletButton() {
   }
 
   if (status === 'connected' && session) {
+    const label = session.addresses.ordAddress.startsWith('id:')
+      ? 'Yours ✓'
+      : shortAddr(session.addresses.ordAddress);
     return (
       <button
         type="button"
         className="btn btn-ghost"
         style={{ padding: '0.35rem 0.55rem', fontSize: '0.75rem' }}
-        title={`Disconnect ${session.provider}`}
+        title={error ?? `Disconnect ${session.provider}`}
         onClick={() => void disconnect()}
       >
-        {shortAddr(session.addresses.ordAddress)}
+        {label}
       </button>
     );
   }
