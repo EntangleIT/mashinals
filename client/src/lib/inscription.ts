@@ -187,7 +187,7 @@ export async function inscribeMashinal(record: MashinalRecord): Promise<Inscribe
       mintNumber,
       collectionId,
       destination: 'yours-ordinals-basket',
-      message: `Inscribed #${mintNumber} into your Yours ordinals basket — origin ${origin}. List it from Market or Yours. Do not mint again.`,
+      message: `Inscribed #${mintNumber} — origin ${origin}. It should now show under Yours → Ordinals (basket 1sat). Do not mint again.`,
     };
   } catch (err) {
     throw wrapWalletError(err, 'Inscribe');

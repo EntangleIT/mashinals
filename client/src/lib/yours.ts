@@ -8,8 +8,6 @@ import {
   createContext,
   deriveDepositAddresses,
   inscribe,
-  mintCollection,
-  mintCollectionItem,
   listOrdinals,
   sellOrdinal,
   buyOrdinal,
@@ -22,6 +20,7 @@ import { OneSatServices } from '@1sat/client';
 import { readAssetIdTag } from '@1sat/types';
 import type { WalletInterface, WalletOutput } from '@bsv/sdk';
 import type { InscriptionMeta } from '@mashinals/shared';
+import { mintCollectionIntoBasket, mintCollectionItemIntoBasket } from './mint-basket';
 
 export const YOURS_CHROME =
   'https://chromewebstore.google.com/detail/yours-wallet/mlbnicldlpdimbjdcncnklfempedeipj';
@@ -217,8 +216,7 @@ async function runWalletAction<T extends { txid?: string; error?: string }>(
 }
 
 /**
- * Deploy the official Mashinals collection parent (once), same pattern as live
- * GatchaGo: `@1sat/actions` `mintCollection` → Yours ordinals basket.
+ * Deploy the official Mashinals collection parent (once) into the Yours `1sat` basket.
  */
 export async function mintCollectionWithYours(input: {
   base64Content: string;
@@ -227,30 +225,10 @@ export async function mintCollectionWithYours(input: {
   description?: string;
   quantity?: number;
 }): Promise<{ txid: string; collectionId: string }> {
-  const ctx = requireContext();
+  requireContext();
   try {
-    const result = await runWalletAction('Mint collection', 'Create inscription', () =>
-      mintCollection.execute(ctx, {
-        base64Content: input.base64Content,
-        contentType: input.contentType,
-        name: input.name ?? 'Mashinals',
-        description:
-          input.description ??
-          'Official Mashinals collection — Infinite Craft–style pixel creatures inscribed as 1Sat Ordinals.',
-        quantity: input.quantity ?? 1_000_000,
-        app: 'mashinals',
-      }),
-    );
-    if (result.error || !result.txid || !result.collectionId) {
-      throw wrapWalletError(
-        new Error(result.error ?? 'collection-mint-failed'),
-        'Mint collection',
-      );
-    }
-    return {
-      txid: result.txid.toLowerCase(),
-      collectionId: result.collectionId.replace('.', '_'),
-    };
+    const result = await mintCollectionIntoBasket(input);
+    return { txid: result.txid, collectionId: result.collectionId };
   } catch (err) {
     if (err instanceof WalletTimeoutError) throw err;
     throw wrapWalletError(err, 'Mint collection');
@@ -258,9 +236,7 @@ export async function mintCollectionWithYours(input: {
 }
 
 /**
- * Mint a Mashinal as a 1Sat collection item into the Yours ordinals basket.
- * Matches live GatchaGo (`mintCollectionItem`) — tagged + customInstructions so
- * sell/transfer work without a bare P2PKH mint-to address.
+ * Mint a Mashinal as a 1Sat collection item and ensure it lands in Yours Ordinals.
  */
 export async function mintCollectionItemWithYours(input: {
   base64Content: string;
@@ -270,24 +246,10 @@ export async function mintCollectionItemWithYours(input: {
   mintNumber?: number;
   traits?: CollectionItemTrait[];
 }): Promise<{ txid: string; origin: string }> {
-  const ctx = requireContext();
+  requireContext();
   try {
-    const result = await runWalletAction('Mint collection item', 'Create inscription', () =>
-      mintCollectionItem.execute(ctx, {
-        base64Content: input.base64Content,
-        contentType: input.contentType,
-        name: input.name.slice(0, 64) || 'Mashinal',
-        collectionId: input.collectionId.replace('.', '_'),
-        mintNumber: input.mintNumber,
-        traits: input.traits,
-        app: 'mashinals',
-      }),
-    );
-    if (result.error || !result.txid) {
-      throw wrapWalletError(new Error(result.error ?? 'no-txid'), 'Mint collection item');
-    }
-    const txid = result.txid.toLowerCase();
-    return { txid, origin: `${txid}_0` };
+    const result = await mintCollectionItemIntoBasket(input);
+    return { txid: result.txid, origin: result.origin };
   } catch (err) {
     if (err instanceof WalletTimeoutError) throw err;
     throw wrapWalletError(err, 'Mint collection item');

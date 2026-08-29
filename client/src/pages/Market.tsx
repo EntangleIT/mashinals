@@ -155,8 +155,8 @@ export function MarketPage() {
     <div>
       <h1 style={{ marginTop: 0 }}>Market</h1>
       <p className="muted">
-        Buy, sell, and transfer Mashinals on the 1Sat orderbook via Yours Wallet. Listings need
-        basket-minted ordinals (leave Mint to blank when inscribing).
+        Buy, sell, and transfer Mashinals via Yours. New mints must land in the Yours{' '}
+        <code>1sat</code> basket (approve basket access if prompted). Open Yours → Ordinals to confirm.
       </p>
 
       <div className="cta-row" style={{ marginBottom: '1rem' }}>
@@ -251,9 +251,10 @@ export function MarketPage() {
       {tab === 'mine' && connected && !loading && mine.length === 0 && (
         <div className="panel">
           <p style={{ margin: 0 }}>
-            No ordinals in the Yours basket. Inscribe from{' '}
-            <Link to="/play">Play</Link> with <strong>Mint to</strong> left blank so Yours can list
-            and transfer them.
+            No ordinals in the Yours <code>1sat</code> basket yet. Inscribe from{' '}
+            <Link to="/play">Play</Link>, then check Yours → Ordinals. If the mint is on-chain but
+            missing here, open Yours → Permissions and allow basket access for <code>1sat</code> on
+            this site, then Refresh.
           </p>
         </div>
       )}
