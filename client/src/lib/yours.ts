@@ -392,30 +392,54 @@ function nameFromOutput(output: WalletOutput): string | null {
   return null;
 }
 
-/** Ordinals currently in the connected Yours basket. */
+/** Ordinals in Yours — merge legacy GatchaGo basket + modern 1sat basket. */
 export async function listWalletOrdinals(limit = 100): Promise<WalletOrdItem[]> {
   const ctx = requireContext();
-  const { outputs } = await listOrdinals.execute(ctx, {
-    limit,
-    includeTags: true,
-    includeCustomInstructions: true,
-  });
-  const items: WalletOrdItem[] = [];
-  for (const output of outputs) {
-    const id = readAssetIdTag(output.tags);
-    if (!id) continue;
-    const listed = (output.tags ?? []).includes('ordlock');
-    const origin = originFromTags(output.tags) ?? (listed ? null : toUnderscoreOutpoint(output.outpoint));
-    items.push({
-      id,
-      outpoint: toUnderscoreOutpoint(output.outpoint),
-      origin,
-      name: nameFromOutput(output),
-      listed,
-      output,
+  const byId = new Map<string, WalletOrdItem>();
+
+  const ingest = (outputs: WalletOutput[]) => {
+    for (const output of outputs) {
+      const id = readAssetIdTag(output.tags);
+      if (!id) continue;
+      const listed = (output.tags ?? []).includes('ordlock');
+      const origin =
+        originFromTags(output.tags) ?? (listed ? null : toUnderscoreOutpoint(output.outpoint));
+      byId.set(id, {
+        id,
+        outpoint: toUnderscoreOutpoint(output.outpoint),
+        origin,
+        name: nameFromOutput(output),
+        listed,
+        output,
+      });
+    }
+  };
+
+  try {
+    const modern = await listOrdinals.execute(ctx, {
+      limit,
+      includeTags: true,
+      includeCustomInstructions: true,
     });
+    ingest(modern.outputs);
+  } catch (err) {
+    console.warn('[yours] listOrdinals(1sat) failed', err);
   }
-  return items;
+
+  // Live GatchaGo still writes here — include if migration hasn't moved them yet.
+  try {
+    const legacy = await ctx.wallet.listOutputs({
+      basket: 'p 1sat ordinals',
+      includeTags: true,
+      includeCustomInstructions: true,
+      limit,
+    });
+    ingest(legacy.outputs);
+  } catch (err) {
+    console.warn('[yours] listOutputs(p 1sat ordinals) failed', err);
+  }
+
+  return [...byId.values()].slice(0, limit);
 }
 
 export async function sellOrdinalWithYours(input: {

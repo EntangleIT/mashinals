@@ -238,9 +238,9 @@ export function InscribePanel({ record }: Props) {
         <p style={{ margin: 0, color: 'var(--danger)' }}>{err ?? walletError}</p>
       )}
       <p className="muted" style={{ margin: 0, fontSize: '0.8rem' }}>
-        Mints use the same plain basket path as live GatchaGo (no Sigma). Approve wallet prompts for
-        protocol <code>onesat</code> and basket <code>1sat</code> — then the NFT shows under Yours →
-        Ordinals right away.
+        Mint path matches live GatchaGo: basket <code>p 1sat ordinals</code>, protocol{' '}
+        <code>[0,&quot;p 1sat&quot;]</code>, no Sigma. Approve those wallet prompts — Yours → Ordinals
+        should update immediately.
       </p>
     </div>
   );
