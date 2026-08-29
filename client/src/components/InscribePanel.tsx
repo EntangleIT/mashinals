@@ -238,8 +238,9 @@ export function InscribePanel({ record }: Props) {
         <p style={{ margin: 0, color: 'var(--danger)' }}>{err ?? walletError}</p>
       )}
       <p className="muted" style={{ margin: 0, fontSize: '0.8rem' }}>
-        Mints go into your Yours <code>1sat</code> ordinals basket (same as live GatchaGo). Approve
-        basket access if the wallet asks — otherwise the NFT will not show under Ordinals.
+        Mints use the same plain basket path as live GatchaGo (no Sigma). Approve wallet prompts for
+        protocol <code>onesat</code> and basket <code>1sat</code> — then the NFT shows under Yours →
+        Ordinals right away.
       </p>
     </div>
   );

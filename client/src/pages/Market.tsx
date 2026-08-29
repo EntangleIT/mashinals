@@ -196,8 +196,8 @@ export function MarketPage() {
       {tab === 'sale' && !loading && listings.length === 0 && (
         <div className="panel">
           <p style={{ margin: 0 }}>
-            No Mashinals listed yet. Mint into your Yours ordinals basket (empty Mint to), open{' '}
-            <strong>My Mashinals</strong>, set a BSV price, and hit List.
+            No Mashinals listed yet. Inscribe from Play so the NFT appears under Yours → Ordinals,
+            then open <strong>My Mashinals</strong>, set a BSV price, and hit List.
           </p>
         </div>
       )}

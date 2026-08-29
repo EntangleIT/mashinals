@@ -93,11 +93,11 @@ export function requireContext(): OneSatContext {
 }
 
 /**
- * Extension wallets are dApp-style (isBaseWallet false). Same as SatPress —
- * approval UI comes from the wallet's createAction/signAction handling.
+ * Extension wallets are dApp-style. Match live GatchaGo: default isBaseWallet
+ * (true) so createAction apply stamps basket outputs the way Yours expects.
  */
 export function buildContext(wallet: WalletInterface): OneSatContext {
-  return createContext(wallet, { chain: 'main', services, isBaseWallet: false });
+  return createContext(wallet, { chain: 'main', services });
 }
 
 /** Derive display addresses + spendable balance for the connected identity. */
